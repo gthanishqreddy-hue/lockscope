@@ -190,7 +190,7 @@ jobs:
           ls -la "$RUNNER_TEMP/dmg" "$RUNNER_TEMP/dmg/LockScope.app/Contents/MacOS"
           bash scripts/smoke-desktop.sh "$RUNNER_TEMP/dmg/LockScope.app/Contents/MacOS/LockScope" \
             "$RUNNER_TEMP/dmg/LockScope.app/Contents/MacOS/lockscope-cli"
-          hdiutil detach "$RUNNER_TEMP/dmg" -quiet
+          hdiutil detach "$RUNNER_TEMP/dmg" -force -quiet # the app may still be exiting
       - uses: actions/upload-artifact@v4
         with:
           name: installer-macos
