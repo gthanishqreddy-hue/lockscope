@@ -184,7 +184,8 @@ jobs:
           mv engine/server/build/installers/*.dmg "out/LockScope-$v-macos-arm64.dmg"
       - name: Smoke-test the app inside the .dmg
         run: |
-          hdiutil attach out/*.dmg -mountpoint "$RUNNER_TEMP/dmg" -nobrowse -quiet
+          hdiutil attach out/*.dmg -mountpoint "$RUNNER_TEMP/dmg" -nobrowse
+          ls -la "$RUNNER_TEMP/dmg" "$RUNNER_TEMP/dmg/LockScope.app/Contents/MacOS"
           bash scripts/smoke-desktop.sh "$RUNNER_TEMP/dmg/LockScope.app/Contents/MacOS/LockScope" \
             "$RUNNER_TEMP/dmg/LockScope.app/Contents/MacOS/lockscope-cli"
           hdiutil detach "$RUNNER_TEMP/dmg" -quiet

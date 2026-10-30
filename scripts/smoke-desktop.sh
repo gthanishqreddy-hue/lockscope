@@ -5,6 +5,7 @@
 #
 #   scripts/smoke-desktop.sh <desktop launcher> <cli launcher>
 set -euo pipefail
+[ -x "$1" ] || { echo "not executable: $1"; exit 1; }
 
 app="$1"
 cli="$2"
@@ -13,7 +14,17 @@ work="$(mktemp -d)"
 
 "$app" --no-window >"$work/app.log" 2>&1 &
 pid=$!
-trap 'kill "$pid" 2>/dev/null || true; taskkill //F //IM LockScope.exe >/dev/null 2>&1 || true' EXIT
+cleanup() {
+  status=$?
+  if [ "$status" -ne 0 ]; then
+    echo "smoke test failed (exit $status); app output:"
+    cat "$work/app.log" || true
+  fi
+  kill "$pid" 2>/dev/null || true
+  taskkill //F //IM LockScope.exe >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
+echo "started $app (pid $pid)"
 
 for _ in $(seq 1 60); do
   if curl -fsS "$base/api/v1/health" >"$work/health.json" 2>/dev/null; then break; fi
