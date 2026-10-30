@@ -29,7 +29,9 @@ function baseOption(theme: ChartTheme): EChartsCoreOption {
   return {
     animationDuration: 300,
     textStyle: { fontFamily: 'system-ui, -apple-system, "Segoe UI", sans-serif', color: theme.textSecondary },
-    aria: { enabled: true },
+    // Our own role=img label and table view describe the chart; ECharts' aria module would
+    // overwrite that label with generic text ("This is a chart...").
+    aria: { enabled: false },
     tooltip: {
       backgroundColor: theme.surface,
       borderColor: theme.border,

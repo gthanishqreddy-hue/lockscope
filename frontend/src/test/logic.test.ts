@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { parseResultFile, parseResultText, SchemaError } from '../schemas/results';
 import { comparabilityIssues } from '../utils/compare';
 import { csvField, toCsv } from '../utils/csv';
-import { escapeHtml } from '../components/chartOptions';
+import { escapeHtml, lineOption, type ChartTheme } from '../components/chartOptions';
 import {
   benchmarkCommand,
   benchmarkPayload,
@@ -113,6 +113,24 @@ describe('csv and html escaping', () => {
     expect(csvField(null)).toBe('');
     expect(csvField(Number.NaN)).toBe('');
     expect(toCsv(['a', 'b'], [{ a: 1, b: 'x' }])).toBe('a,b\n1,x\n');
+  });
+
+  it('leaves chart accessibility labels to the page, not ECharts', () => {
+    const theme: ChartTheme = {
+      text: '',
+      textSecondary: '',
+      muted: '',
+      grid: '',
+      axis: '',
+      surface: '',
+      border: '',
+      series: [],
+      ordinal: [],
+    };
+    const option = lineOption(theme, [], { xName: 'Threads', yName: 'ops' }) as {
+      aria: { enabled: boolean };
+    };
+    expect(option.aria.enabled).toBe(false);
   });
 
   it('escapes HTML in chart tooltips', () => {

@@ -1,13 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts/core';
 import { BarChart, LineChart } from 'echarts/charts';
-import {
-  AriaComponent,
-  GridComponent,
-  LegendComponent,
-  MarkLineComponent,
-  TooltipComponent,
-} from 'echarts/components';
+import { GridComponent, LegendComponent, MarkLineComponent, TooltipComponent } from 'echarts/components';
 import { SVGRenderer } from 'echarts/renderers';
 import type { EChartsCoreOption } from 'echarts/core';
 import type { ChartTheme } from './chartOptions';
@@ -18,7 +12,6 @@ echarts.use([
   GridComponent,
   TooltipComponent,
   LegendComponent,
-  AriaComponent,
   MarkLineComponent,
   SVGRenderer,
 ]);
