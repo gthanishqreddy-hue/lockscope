@@ -13,6 +13,16 @@ function gitCommit(): string {
   }
 }
 
+/** Public repository URL for documentation links: VITE_REPO_URL, or derived on Vercel. */
+function repoUrl(): string {
+  if (process.env.VITE_REPO_URL) return process.env.VITE_REPO_URL;
+  const { VERCEL_GIT_PROVIDER, VERCEL_GIT_REPO_OWNER, VERCEL_GIT_REPO_SLUG } = process.env;
+  if (VERCEL_GIT_PROVIDER === 'github' && VERCEL_GIT_REPO_OWNER && VERCEL_GIT_REPO_SLUG) {
+    return `https://github.com/${VERCEL_GIT_REPO_OWNER}/${VERCEL_GIT_REPO_SLUG}`;
+  }
+  return '';
+}
+
 // BASE_PATH lets the dashboard be served from a sub-path (e.g. GitHub Pages project sites).
 export default defineConfig({
   base: process.env.BASE_PATH ?? '/',
@@ -20,7 +30,10 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version ?? '0.1.0'),
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
-    __GIT_COMMIT__: JSON.stringify(process.env.CF_PAGES_COMMIT_SHA?.slice(0, 7) ?? gitCommit()),
+    __GIT_COMMIT__: JSON.stringify(
+      (process.env.VERCEL_GIT_COMMIT_SHA ?? process.env.CF_PAGES_COMMIT_SHA)?.slice(0, 7) ?? gitCommit(),
+    ),
+    __REPO_URL__: JSON.stringify(repoUrl()),
   },
   build: {
     target: 'es2022',

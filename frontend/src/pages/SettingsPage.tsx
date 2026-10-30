@@ -6,8 +6,8 @@ import { DEFAULT_ENGINE_URL } from '../services/engineClient';
 import { downloadText } from '../utils/csv';
 import { formatDate } from '../utils/format';
 
-/** Set VITE_REPO_URL at build time to link the documentation in your published repository. */
-const REPO_URL: string | undefined = import.meta.env.VITE_REPO_URL;
+/** Set at build time (VITE_REPO_URL, or derived from Vercel's git variables). */
+const REPO_URL = __REPO_URL__;
 
 export function SettingsPage() {
   const {

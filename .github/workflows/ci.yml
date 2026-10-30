@@ -34,6 +34,46 @@ jobs:
           path: engine/**/build/reports/tests/
           if-no-files-found: ignore
 
+  memory-model:
+    # jcstress + correctness suite on x64 (strong TSO memory model) and ARM64 (weaker model that
+    # can expose missing happens-before edges x86 hides). ARM64 runners are free for public repos.
+    name: Memory model (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    needs: engine
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: jcstress (quick mode)
+        working-directory: engine
+        run: ./gradlew --no-daemon :jcstress:jcstress -Pjcstress.mode=quick
+      - name: Correctness suite, locks
+        working-directory: engine
+        run: ./gradlew --no-daemon :bench:run --args="stress --target locks --runs 3 --out benchmark-results/local/ci-locks-${{ matrix.arch }}.json"
+      - name: Correctness suite, sets
+        working-directory: engine
+        run: ./gradlew --no-daemon :bench:run --args="stress --target sets --runs 3 --out benchmark-results/local/ci-sets-${{ matrix.arch }}.json"
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: memory-model-${{ matrix.arch }}
+          path: |
+            engine/jcstress/build/reports/jcstress/
+            benchmark-results/local/
+          if-no-files-found: ignore
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest

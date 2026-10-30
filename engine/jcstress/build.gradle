@@ -1,0 +1,37 @@
+// jcstress tests: Java Memory Model stress tests for every lock (see docs/correctness.md).
+// Run with ./gradlew :jcstress:jcstress [-Pjcstress.mode=sanity|quick|default|tough]
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation project(':core')
+    implementation "org.openjdk.jcstress:jcstress-core:${jcstressVersion}"
+    annotationProcessor "org.openjdk.jcstress:jcstress-core:${jcstressVersion}"
+}
+
+// jcstress' generated test infrastructure triggers lint warnings we do not control.
+tasks.named('compileJava') {
+    options.compilerArgs -= ['-Werror']
+    options.compilerArgs += ['-Xlint:-rawtypes', '-Xlint:-unchecked', '-Xlint:-cast', '-Xlint:-static']
+}
+
+tasks.register('jcstress', JavaExec) {
+    group = 'verification'
+    description = 'Runs the jcstress Java Memory Model tests for all locks.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.openjdk.jcstress.Main'
+    def mode = project.findProperty('jcstress.mode') ?: 'quick'
+    def reportDir = layout.buildDirectory.dir('reports/jcstress').get().asFile
+    // Small heaps: jcstress runs many test JVMs at once, and default heap reservations can
+    // exhaust the commit limit on a laptop ("unable to create native thread").
+    args = ['-m', mode, '-r', reportDir.absolutePath, '-jvmArgsPrepend', '-Xms32m -Xmx256m']
+    if (project.hasProperty('jcstress.tests')) {
+        args += ['-t', project.property('jcstress.tests')]
+    }
+    workingDir = layout.buildDirectory.dir('jcstress').get().asFile // keeps its result dumps out of the source tree
+    doFirst {
+        reportDir.mkdirs()
+        workingDir.mkdirs()
+    }
+}

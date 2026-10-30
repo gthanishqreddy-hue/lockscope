@@ -84,12 +84,36 @@ cd engine
 
 CLI exit code 1 means a real algorithm failed or a negative control was missed.
 
+## jcstress: Java Memory Model tests
+
+`engine/jcstress` holds [jcstress](https://github.com/openjdk/jcstress) tests for every lock. jcstress
+runs each test millions of times across JIT compilation modes and scheduling strategies and
+reports every outcome it observed.
+
+| Test | Actors | Forbidden outcome |
+|---|---|---|
+| `<Lock>Increment` | two threads increment a plain `int` under the lock | `1` (a lost update) |
+| `<Lock>Visibility` | one thread writes `x = 1; y = 1` under the lock, the other reads `y, x` under the lock | `1, 0` or `0, 1` (a torn or reordered view) |
+
+The `NoLock` versions mark those outcomes *acceptable-interesting* instead of forbidden, and the
+report shows that jcstress observes them. Any forbidden outcome fails the Gradle task (verified with a
+deliberately failing probe test).
+
+```bash
+cd engine
+./gradlew :jcstress:jcstress                         # quick mode, about 5-10 minutes
+./gradlew :jcstress:jcstress -Pjcstress.mode=tough   # much longer, more samples
+./gradlew :jcstress:jcstress -Pjcstress.tests=Mcs    # only tests whose name matches
+```
+
+The HTML report is written to `engine/jcstress/build/reports/jcstress/`. CI runs jcstress and the
+correctness suite on both **x64** and **ARM64** Linux (`memory-model` job), so the weaker ARM memory
+model is exercised on every push.
+
 ## Threats to validity
 
-- **Hardware memory model.** x86 is strongly ordered (TSO). A missing fence that the JMM requires
-  may never show up on x86 but fail on ARM. Run the suite on ARM hardware (e.g. Apple Silicon or
-  an ARM cloud VM) for stronger evidence.
-- **Sampling.** Stress tests explore a tiny fraction of interleavings. Tools such as
-  [jcstress](https://github.com/openjdk/jcstress) or model checkers explore more systematically;
-  they are not part of this project (see the README's next steps).
+- **Hardware memory model.** x86 is strongly ordered (TSO); a missing fence that the JMM requires
+  may never show up on x86. CI therefore also runs jcstress and the suite on ARM64 Linux.
+- **Sampling.** Stress tests and jcstress explore many but not all interleavings. Exhaustive
+  model checking (e.g. of the algorithms in TLA+ or with a JMM model checker) is out of scope.
 - **Timing.** The JIT may compile the harness differently from production code.

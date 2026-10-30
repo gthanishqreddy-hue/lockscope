@@ -9,7 +9,8 @@ negative controls), JMH benchmarks with honest statistics, and a dashboard to ex
 - **Engine (Java 17+):** TAS, TTAS, exponential backoff, CLH and MCS locks plus `ReentrantLock`
   baselines; coarse-grained, fine-grained, optimistic, lazy and lock-free (Harris–Michael) sets.
 - **Correctness:** lost-update and overlap checks for locks; partitioned reference model,
-  conservation and bounded linearizability checks for sets; seed-reproducible JSON reports.
+  conservation and bounded linearizability checks for sets; seed-reproducible JSON reports;
+  jcstress Java Memory Model tests for every lock, run in CI on x64 and ARM64.
 - **Benchmarks:** JMH throughput or latency sampling, thread sweeps, 99.9% confidence intervals,
   allocation per operation, speedup and efficiency, JSON + CSV export.
 - **Dashboard (React + TypeScript):** 10 pages, works as a free static site from bundled measured
@@ -23,12 +24,14 @@ Nothing in the dashboard pretends to be live: every dataset is labelled *Bundled
 
 ```text
 engine/core    locks, sets, correctness harness (no dependencies)
-   ▲
+   ▲  ▲
+   │  └─ engine/jcstress  Java Memory Model tests for every lock
+   │
 engine/bench   JMH benchmarks, services, result schema, `lockscope` CLI ──► benchmark-results/*.json
    ▲
 engine/server  local API on 127.0.0.1:8787 (JDK HTTP server)
    ▲  fetch (optional)                                              │ import / bundle
-frontend       static React dashboard (Cloudflare Pages or localhost) ◄─┘
+frontend       static React dashboard (Vercel, any static host, or localhost) ◄─┘
 ```
 
 Details: [docs/architecture.md](docs/architecture.md).
@@ -67,6 +70,7 @@ On Windows use `gradlew.bat` from `cmd`/PowerShell, or Git Bash for the commands
 |---|---|
 | Engine build + tests | `cd engine && ./gradlew build` |
 | Heavier stress tier | `./gradlew test -Plockscope.stress=heavy` |
+| jcstress (JMM) tests | `./gradlew :jcstress:jcstress [-Pjcstress.mode=tough]` |
 | Correctness suite | `./gradlew :bench:run --args="stress --target locks\|sets [--runs N --seed S ...]"` |
 | Benchmark | `./gradlew :bench:run --args="bench --profile NAME [--threads 1,2,4,8 --forks 2 ...]"` |
 | List profiles | `./gradlew :bench:run --args="profiles"` |
@@ -151,8 +155,8 @@ instructions, verified free-plan limits and troubleshooting: [docs/deployment.md
 
 ## Limitations
 
-- Correctness checks sample executions on the host's hardware (x86 here); they are evidence, not
-  proof, and cannot find memory-ordering bugs that only weaker hardware (ARM) exposes.
+- Correctness checks and jcstress sample executions (x86 locally, x64 and ARM64 in CI); they are
+  strong evidence, not a proof.
 - The linearizability checker verifies short bounded histories of add/remove/contains only.
 - Benchmarks reflect one machine, JDK and moment; no statistical significance is claimed.
 - Locks are not reentrant, interruptible or timed (by design; documented per lock).

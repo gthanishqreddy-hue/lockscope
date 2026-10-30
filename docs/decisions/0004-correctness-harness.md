@@ -9,6 +9,6 @@ produce reports the dashboard can consume or that cover whole data-structure ope
 bounded linearizability) that emit structured, seed-reproducible reports, and prove their power
 with negative controls that must fail.
 
-**Consequences:** the checks sample executions on the host's hardware memory model; they cannot
-find bugs that only appear on weaker hardware. Adding jcstress tests for the locks is listed as a
-next step.
+**Consequences:** the checks sample executions on the host's hardware memory model. To cover the
+JMM more rigorously, jcstress tests were added later for every lock (`engine/jcstress`), and CI runs
+them on both x64 and ARM64.

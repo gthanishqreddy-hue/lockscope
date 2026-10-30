@@ -23,7 +23,23 @@ The output is `frontend/dist/`. It contains `_redirects` (single-page-app fallba
 To serve from a sub-path (e.g. a GitHub Pages project site), build with
 `BASE_PATH=/lockscope/ npm run build`.
 
-## 2. Cloudflare Pages (recommended, free)
+## 2. Vercel (the live deployment)
+
+The public dashboard is deployed on Vercel's free Hobby plan, linked to the GitHub repository:
+every push to `main` builds and redeploys it, and pull requests get preview URLs.
+`frontend/vercel.json` sets the build (`npm ci`, `npm run build`, output `dist`), the
+single-page-app fallback and the same security headers as `_headers`. The commit hash and the
+repository link shown in Settings are taken from Vercel's git environment variables.
+
+To set it up on your own account:
+
+1. Push the repository to GitHub.
+2. Vercel dashboard → **Add New… → Project** → import the repository.
+3. Set **Root Directory** to `frontend`; everything else comes from `vercel.json`.
+4. Deploy. No payment details are needed on the Hobby plan; Vercel's fair-use limits apply and
+   may change.
+
+## 3. Cloudflare Pages (alternative, free)
 
 Free-plan limits, as documented by Cloudflare on 2026-10-30
 (<https://developers.cloudflare.com/pages/platform/limits/>): 500 builds per month, 1 concurrent
@@ -59,7 +75,7 @@ cd frontend && npm run build
 npx wrangler pages deploy dist --project-name lockscope
 ```
 
-## 3. Verify a deployment
+## 4. Verify a deployment
 
 - Open the site and each route directly (e.g. `/results`, `/learn/linearizability`): the
   `_redirects` fallback must serve the app, not a 404.
@@ -67,7 +83,7 @@ npx wrangler pages deploy dist --project-name lockscope
 - Settings shows the build's commit and "Static (no engine connected)" unless you run an engine.
 - Browser devtools: no console errors; response headers include `Content-Security-Policy`.
 
-## 4. Using a deployed dashboard with a local engine
+## 5. Using a deployed dashboard with a local engine
 
 Start the engine with the deployed origin allowed:
 
@@ -80,7 +96,7 @@ Network Access / Local Network Access may show a permission prompt or block the 
 answers the PNA preflight). If it is blocked, run the dashboard locally (`npm run dev`), which
 always works, or use the CLI and import the JSON files.
 
-## 5. Publishing updated results
+## 6. Publishing updated results
 
 ```bash
 cd engine && ./gradlew :bench:run --args="bench --profile set-balanced --out benchmark-results/sample/sets-balanced.json"
@@ -96,4 +112,4 @@ git add benchmark-results/sample frontend/public/data && git commit -m "Update m
 | Blank page, assets 404 under a sub-path | rebuild with `BASE_PATH=/your-path/` |
 | "Bundled datasets unavailable" | `data/index.json` missing or blocked; rerun `scripts/export-results.mjs` |
 | Build fails on Cloudflare with Node errors | set `NODE_VERSION=22` |
-| Engine calls blocked from the deployed site | see section 4 |
+| Engine calls blocked from the deployed site | see section 5 |
