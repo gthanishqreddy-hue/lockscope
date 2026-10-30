@@ -1,0 +1,220 @@
+# Builds the desktop packages (docs/installing.md) on each operating system and smoke-tests each
+# one: start the app, load the dashboard and API, run a forked benchmark with the bundled runtime.
+# Pushing a tag v* also publishes them as a GitHub release; running it manually only builds them.
+name: Installers
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run build:desktop
+        env:
+          VITE_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-desktop
+          path: frontend/dist-desktop
+
+  universal:
+    needs: dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dashboard-desktop
+          path: frontend/dist-desktop
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build
+        working-directory: engine
+        run: ./gradlew --no-daemon :server:universalZip
+      - name: Smoke test
+        run: |
+          mkdir -p out && cp engine/server/build/installers/*.zip out/
+          unzip -q out/*.zip -d "$RUNNER_TEMP/universal"
+          bash scripts/smoke-desktop.sh "$RUNNER_TEMP"/universal/LockScope-*/bin/lockscope-app \
+            "$RUNNER_TEMP"/universal/LockScope-*/bin/lockscope
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installer-universal
+          path: out/
+
+  windows:
+    needs: dashboard
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dashboard-desktop
+          path: frontend/dist-desktop
+      # Microsoft's build: its java.exe/javaw.exe are what Start LockScope.bat runs when Smart App
+      # Control blocks the unsigned LockScope.exe (tested with this JDK on a machine with it on).
+      - uses: actions/setup-java@v4
+        with:
+          distribution: microsoft
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: WiX Toolset 3 (jpackage needs it for .msi)
+        shell: pwsh
+        run: |
+          if (Get-Command candle.exe -ErrorAction SilentlyContinue) { exit 0 }
+          $bin = Get-ChildItem 'C:\Program Files (x86)\WiX Toolset v3*\bin' -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $bin) {
+            Invoke-WebRequest https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip -OutFile "$env:RUNNER_TEMP\wix.zip"
+            Expand-Archive "$env:RUNNER_TEMP\wix.zip" "$env:RUNNER_TEMP\wix"
+            $bin = Get-Item "$env:RUNNER_TEMP\wix"
+          }
+          Add-Content $env:GITHUB_PATH $bin.FullName
+      - name: Build
+        working-directory: engine
+        run: ./gradlew.bat --no-daemon :server:jpackage -Pjpackage.type=msi
+      - name: Collect
+        run: |
+          v=$(sed -n "s/.*version = '\(.*\)'.*/\1/p" engine/build.gradle | head -1)
+          mkdir -p out
+          mv engine/server/build/installers/LockScope-*.msi "out/LockScope-$v-windows-x64.msi"
+          (cd engine/server/build/installers && 7z a -tzip -bso0 "$GITHUB_WORKSPACE/out/LockScope-$v-windows-x64-portable.zip" LockScope)
+      - name: Install the .msi
+        shell: pwsh
+        run: |
+          $msi = (Get-ChildItem out/*.msi).FullName
+          $p = Start-Process msiexec -ArgumentList '/i', "`"$msi`"", '/qn', '/l*v', "`"$env:RUNNER_TEMP\msi.log`"" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content "$env:RUNNER_TEMP\msi.log" -Tail 60; exit 1 }
+          $exe = Get-ChildItem "$env:LOCALAPPDATA\LockScope\LockScope.exe", "$env:ProgramFiles\LockScope\LockScope.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $exe) { throw 'LockScope.exe was not installed' }
+          if (-not (Test-Path (Join-Path $exe.DirectoryName 'Start LockScope.bat'))) { throw 'Start LockScope.bat is missing' }
+          "installed to $($exe.DirectoryName)"
+          Add-Content $env:GITHUB_ENV "INSTALL_DIR=$($exe.DirectoryName -replace '\\','/')"
+      - name: Smoke-test the installed app
+        run: bash scripts/smoke-desktop.sh "$INSTALL_DIR/LockScope.exe" "$INSTALL_DIR/lockscope-cli.exe"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installer-windows
+          path: out/
+
+  linux:
+    needs: dashboard
+    # The oldest supported runner, so the .deb dependencies install on older distributions too.
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dashboard-desktop
+          path: frontend/dist-desktop
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Packaging tools
+        run: sudo apt-get update -q && sudo apt-get install -y -q rpm fakeroot
+      - name: Build
+        working-directory: engine
+        run: |
+          ./gradlew --no-daemon :server:jpackageImage
+          ./gradlew --no-daemon :server:jpackage -Pjpackage.type=deb
+          ./gradlew --no-daemon :server:jpackage -Pjpackage.type=rpm
+      - name: Collect
+        run: |
+          v=$(sed -n "s/.*version = '\(.*\)'.*/\1/p" engine/build.gradle | head -1)
+          mkdir -p out
+          tar -C engine/server/build/installers -czf "out/LockScope-$v-linux-x64.tar.gz" LockScope
+          mv engine/server/build/installers/*.deb "out/LockScope-$v-linux-amd64.deb"
+          mv engine/server/build/installers/*.rpm "out/LockScope-$v-linux-x86_64.rpm"
+          rpm -qip out/*.rpm
+      - name: Install the .deb and smoke-test the installed app
+        run: |
+          sudo apt-get install -y -q ./out/*.deb
+          app=$(dpkg -L lockscope | grep '/bin/LockScope$')
+          echo "installed: $app"
+          bash scripts/smoke-desktop.sh "$app" "$(dirname "$app")/lockscope-cli"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installer-linux
+          path: out/
+
+  macos:
+    needs: dashboard
+    runs-on: macos-latest # Apple silicon
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dashboard-desktop
+          path: frontend/dist-desktop
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build
+        working-directory: engine
+        run: ./gradlew --no-daemon :server:jpackage -Pjpackage.type=dmg
+      - name: Collect
+        run: |
+          v=$(sed -n "s/.*version = '\(.*\)'.*/\1/p" engine/build.gradle | head -1)
+          mkdir -p out
+          mv engine/server/build/installers/*.dmg "out/LockScope-$v-macos-arm64.dmg"
+      - name: Smoke-test the app inside the .dmg
+        run: |
+          hdiutil attach out/*.dmg -mountpoint "$RUNNER_TEMP/dmg" -nobrowse -quiet
+          bash scripts/smoke-desktop.sh "$RUNNER_TEMP/dmg/LockScope.app/Contents/MacOS/LockScope" \
+            "$RUNNER_TEMP/dmg/LockScope.app/Contents/MacOS/lockscope-cli"
+          hdiutil detach "$RUNNER_TEMP/dmg" -quiet
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installer-macos
+          path: out/
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [universal, windows, linux, macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: installer-*
+          merge-multiple: true
+          path: out
+      - name: Checksums
+        run: (cd out && sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt)
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" out/* --clobber
+          else
+            gh release create "$TAG" out/* --title "LockScope $TAG" --notes-file .github/release-notes.md
+          fi

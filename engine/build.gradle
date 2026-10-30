@@ -1,7 +1,7 @@
 // LockScope engine: shared build conventions for all subprojects.
 allprojects {
     group = 'io.lockscope'
-    version = '0.1.0'
+    version = '1.0.0'
     repositories { mavenCentral() }
 }
 

@@ -16,7 +16,7 @@ public record EnvironmentInfo(
         long maxHeapMb,
         String jmhVersion) {
 
-    public static final String LOCKSCOPE_VERSION = "0.1.0";
+    public static final String LOCKSCOPE_VERSION = "1.0.0";
 
     public static EnvironmentInfo capture() {
         return new EnvironmentInfo(

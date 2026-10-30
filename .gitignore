@@ -3,6 +3,7 @@ engine/.gradle/
 engine/**/build/
 frontend/node_modules/
 frontend/dist/
+frontend/dist-desktop/
 frontend/coverage/
 
 # Local benchmark and test runs (publish chosen files to benchmark-results/sample/ instead)

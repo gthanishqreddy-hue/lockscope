@@ -5,6 +5,7 @@ Start it from the repository root:
 ```bash
 cd engine && ./gradlew :server:run
 # options: --args="--port 8787 --allowed-origins http://localhost:5173,https://your-site.pages.dev"
+#          --dashboard ../frontend/dist-desktop   also serve the dashboard at / (as the desktop app does)
 ```
 
 Base URL `http://127.0.0.1:8787/api/v1`. The server binds to the loopback interface only, has no

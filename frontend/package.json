@@ -1,7 +1,7 @@
 {
   "name": "lockscope-dashboard",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "LockScope dashboard: explore, compare and run concurrency experiments.",
   "license": "MIT",
@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:desktop": "tsc -b && vite build --mode desktop --outDir dist-desktop",
     "preview": "vite preview",
     "typecheck": "tsc -b --pretty",
     "lint": "eslint . --max-warnings=0",

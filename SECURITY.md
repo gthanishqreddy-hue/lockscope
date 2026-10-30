@@ -15,6 +15,11 @@ LockScope is a local developer tool plus a static website.
   threads, forks, iterations, runs, timeouts and total estimated time; runs one experiment at a time
   with a queue of 4; never executes commands or reads/writes arbitrary paths from requests; never
   returns stack traces to clients.
+- **Desktop app:** the same server also serves the built dashboard read-only (GET/HEAD) from its
+  install folder, with the same Host check; request paths that would leave that folder (`..`,
+  backslashes, drive letters, `:`) are rejected, and pages carry a CSP that allows connections only
+  to the app's own origin. The packages are not code-signed; check downloads against
+  `SHA256SUMS.txt` in the release.
 
 ## Known limitations
 

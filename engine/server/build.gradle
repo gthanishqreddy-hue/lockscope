@@ -1,4 +1,5 @@
-// Local HTTP API (JDK built-in HTTP server) that runs experiments for the dashboard.
+// Local HTTP API (JDK built-in HTTP server) that runs experiments for the dashboard, and the
+// desktop app packaging (universal zip and native installers, see docs/installing.md).
 plugins {
     id 'application'
 }
@@ -18,4 +19,128 @@ application {
 
 tasks.named('run', JavaExec) {
     workingDir = rootProject.projectDir.parentFile
+}
+
+// ---- Desktop app packaging ------------------------------------------------------------------
+// Both packages need the desktop build of the dashboard first: cd frontend && npm run build:desktop
+
+def dashboardDir = file(findProperty('lockscope.dashboardDir') ?: "${rootProject.projectDir}/../frontend/dist-desktop")
+def appClasspath = files(tasks.named('jar'), configurations.runtimeClasspath)
+
+def requireDashboard = {
+    if (!new File(dashboardDir, 'index.html').isFile()) {
+        throw new GradleException("No dashboard build in ${dashboardDir}. Run `npm run build:desktop` in frontend/ "
+                + "first, or pass -Plockscope.dashboardDir=<dir>.")
+    }
+}
+
+def desktopStartScripts = tasks.register('desktopStartScripts', CreateStartScripts) {
+    mainClass = 'io.lockscope.server.DesktopApp'
+    applicationName = 'lockscope-app'
+    outputDir = layout.buildDirectory.dir('scripts-desktop').get().asFile
+    classpath = startScripts.classpath
+}
+
+def cliStartScripts = tasks.register('cliStartScripts', CreateStartScripts) {
+    mainClass = 'io.lockscope.bench.cli.LockScopeCli'
+    applicationName = 'lockscope'
+    outputDir = layout.buildDirectory.dir('scripts-cli').get().asFile
+    classpath = startScripts.classpath
+}
+
+// Runs anywhere with Java 17+: bin/lockscope-app (desktop app), bin/lockscope (CLI), bin/lockscope-server.
+tasks.register('universalZip', Zip) {
+    group = 'distribution'
+    description = 'Builds the platform-independent zip (needs Java 17+ on the target machine).'
+    doFirst { requireDashboard() }
+    archiveFileName = "LockScope-${project.version}-universal.zip"
+    destinationDirectory = layout.buildDirectory.dir('installers')
+    def top = "LockScope-${project.version}"
+    into("${top}/bin") {
+        from(startScripts, desktopStartScripts, cliStartScripts)
+        filePermissions { unix('rwxr-xr-x') }
+    }
+    into("${top}/lib") { from(appClasspath) }
+    into("${top}/dashboard") { from(dashboardDir) { exclude '**/*.map' } }
+    into(top) {
+        from("${rootProject.projectDir}/../LICENSE")
+        from('packaging/README-universal.txt') { rename { 'README.txt' } }
+    }
+}
+
+def jpackageInput = tasks.register('jpackageInput', Sync) {
+    doFirst { requireDashboard() }
+    into layout.buildDirectory.dir('jpackage/input')
+    from(appClasspath)
+    into('dashboard') { from(dashboardDir) { exclude '**/*.map' } }
+}
+
+// Native packages with a bundled Java runtime. jpackage only builds for the OS it runs on.
+//   jpackageImage: the app folder (build/installers/LockScope), runs without installing
+//   jpackage:      the installer, -Pjpackage.type=msi|exe (Windows, needs WiX 3), deb|rpm (Linux), dmg|pkg (macOS)
+def os = System.getProperty('os.name').toLowerCase()
+def windows = os.contains('win')
+def mac = os.contains('mac')
+def installersDir = layout.buildDirectory.dir('installers').get().asFile
+def jpackageTool = "${findProperty('jpackage.javaHome') ?: System.getProperty('java.home')}/bin/jpackage${windows ? '.exe' : ''}"
+def appImage = new File(installersDir, mac ? 'LockScope.app' : 'LockScope')
+def commonArgs = [
+    '--name', 'LockScope',
+    '--app-version', project.version,
+    '--vendor', 'LockScope',
+    '--description', 'LockScope: concurrent systems performance lab',
+    '--copyright', 'MIT License',
+    '--dest', installersDir,
+]
+def appArgs = [
+    '--input', jpackageInput.get().destinationDir,
+    '--main-jar', tasks.named('jar').get().archiveFileName.get(),
+    '--main-class', 'io.lockscope.server.DesktopApp',
+    '--add-launcher', "lockscope-cli=${file('packaging/cli-launcher.properties')}",
+    '--icon', file("packaging/icons/${windows ? 'icon.ico' : mac ? 'icon.icns' : 'icon.png'}"),
+    // JMH starts each benchmark in a new JVM from this runtime, so it must keep bin/java:
+    // these are jpackage's default jlink options minus --strip-native-commands.
+    '--jlink-options', '--strip-debug --no-man-pages --no-header-files',
+    '--add-modules', 'java.base,java.desktop,java.logging,java.management,java.naming,java.net.http,'
+        + 'java.sql,java.xml,jdk.httpserver,jdk.management,jdk.unsupported,jdk.zipfs',
+]
+def startScript = file('packaging/windows/Start LockScope.bat')
+def macArgs = ['--mac-package-identifier', 'io.lockscope.app', '--mac-package-name', 'LockScope']
+
+def jpackageImage = tasks.register('jpackageImage', Exec) {
+    group = 'distribution'
+    description = 'Builds the LockScope app folder with a bundled Java runtime.'
+    dependsOn jpackageInput
+    commandLine(([jpackageTool, '--type', 'app-image'] + commonArgs + appArgs + (mac ? macArgs : [])).collect { it.toString() })
+    doFirst {
+        appImage.deleteDir() // jpackage refuses to overwrite an existing app image
+        installersDir.mkdirs()
+    }
+    doLast {
+        if (windows) {
+            // Smart App Control blocks the unsigned LockScope.exe; the bundled javaw.exe still runs.
+            java.nio.file.Files.copy(startScript.toPath(), new File(appImage, startScript.name).toPath())
+        }
+    }
+}
+
+tasks.register('jpackage', Exec) {
+    group = 'distribution'
+    description = 'Builds a native installer with jpackage (-Pjpackage.type=msi|exe|deb|rpm|dmg|pkg).'
+    def type = findProperty('jpackage.type') ?: (windows ? 'msi' : mac ? 'dmg' : 'deb')
+    def args = [jpackageTool, '--type', type] + commonArgs + ['--license-file', "${rootProject.projectDir}/../LICENSE"]
+    if (windows) {
+        // Package the app folder so the installer also contains Start LockScope.bat.
+        dependsOn jpackageImage
+        args += ['--app-image', appImage,
+                 '--win-menu', '--win-menu-group', 'LockScope', '--win-shortcut', '--win-dir-chooser',
+                 '--win-per-user-install', '--win-upgrade-uuid', '6f1d7a52-3c0e-4f7b-9d38-5a1b2c4e8f90']
+    } else {
+        dependsOn jpackageInput
+        args += appArgs
+        args += mac ? macArgs : ['--linux-package-name', 'lockscope', '--linux-shell-shortcut',
+                                 '--linux-menu-group', 'Development', '--linux-app-category', 'devel']
+    }
+    commandLine args.collect { it.toString() }
+    doFirst { installersDir.mkdirs() }
 }

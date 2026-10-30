@@ -5,7 +5,8 @@ import { parseResultFile, type ResultReport } from '../schemas/results';
  * failures to {@link EngineError}, so the UI can show a precise message instead of hanging.
  */
 
-export const DEFAULT_ENGINE_URL = 'http://127.0.0.1:8787';
+/** In the desktop app the engine serves the dashboard, so the engine is the page's own origin. */
+export const DEFAULT_ENGINE_URL = __BUNDLED_WITH_ENGINE__ ? window.location.origin : 'http://127.0.0.1:8787';
 
 export class EngineError extends Error {
   constructor(

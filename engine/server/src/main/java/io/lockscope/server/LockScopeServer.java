@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -21,6 +22,8 @@ import java.util.logging.Logger;
  *   --port N               default 8787
  *   --allowed-origins a,b  browser origins allowed by CORS
  *                          (default: the Vite dev and preview servers on localhost)
+ *   --dashboard DIR        also serve a built dashboard (npm run build:desktop) at /;
+ *                          the server's own origin is then allowed too
  * </pre>
  */
 public final class LockScopeServer implements AutoCloseable {
@@ -34,8 +37,15 @@ public final class LockScopeServer implements AutoCloseable {
     private final HttpServer server;
     private final ExperimentManager manager;
     private final ExecutorService httpThreads;
+    private final Set<String> allowedOrigins;
 
     LockScopeServer(int port, Set<String> allowedOrigins) throws IOException {
+        this(port, allowedOrigins, null);
+    }
+
+    /** @param dashboard directory with the built dashboard to serve at /, or null for the API only */
+    LockScopeServer(int port, Set<String> allowedOrigins, Path dashboard) throws IOException {
+        DashboardHandler dashboardHandler = dashboard == null ? null : new DashboardHandler(dashboard);
         manager = new ExperimentManager();
         server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), port), 16);
         httpThreads = Executors.newFixedThreadPool(4, r -> {
@@ -44,7 +54,15 @@ public final class LockScopeServer implements AutoCloseable {
             return t;
         });
         server.setExecutor(httpThreads);
-        server.createContext("/api/", new ApiHandler(manager, allowedOrigins));
+        Set<String> origins = new LinkedHashSet<>(allowedOrigins);
+        if (dashboardHandler != null) {
+            int actualPort = port();
+            origins.add("http://127.0.0.1:" + actualPort);
+            origins.add("http://localhost:" + actualPort);
+            server.createContext("/", dashboardHandler);
+        }
+        this.allowedOrigins = Set.copyOf(origins);
+        server.createContext("/api/", new ApiHandler(manager, this.allowedOrigins));
     }
 
     void start() {
@@ -53,6 +71,10 @@ public final class LockScopeServer implements AutoCloseable {
 
     int port() {
         return server.getAddress().getPort();
+    }
+
+    Set<String> allowedOrigins() {
+        return allowedOrigins;
     }
 
     @Override
@@ -65,6 +87,7 @@ public final class LockScopeServer implements AutoCloseable {
     public static void main(String[] args) throws IOException {
         int port = 8787;
         Set<String> origins = new LinkedHashSet<>(DEFAULT_ORIGINS);
+        Path dashboard = null;
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
                 case "--port" -> port = Integer.parseInt(value(args, ++i, "--port"));
@@ -73,17 +96,21 @@ public final class LockScopeServer implements AutoCloseable {
                     origins.addAll(Arrays.stream(value(args, ++i, "--allowed-origins").split(","))
                             .map(String::trim).filter(s -> !s.isEmpty()).toList());
                 }
+                case "--dashboard" -> dashboard = Path.of(value(args, ++i, "--dashboard"));
                 default -> {
                     System.err.println("unknown option " + args[i]);
                     System.exit(2);
                 }
             }
         }
-        LockScopeServer server = new LockScopeServer(port, origins);
+        LockScopeServer server = new LockScopeServer(port, origins, dashboard);
         server.start();
         Runtime.getRuntime().addShutdownHook(new Thread(server::close));
         LOG.info("LockScope API listening on http://127.0.0.1:" + server.port() + "/api/v1 (allowed origins: "
-                + origins + ")");
+                + server.allowedOrigins() + ")");
+        if (dashboard != null) {
+            LOG.info("Dashboard: http://127.0.0.1:" + server.port() + "/");
+        }
     }
 
     private static String value(String[] args, int index, String name) {

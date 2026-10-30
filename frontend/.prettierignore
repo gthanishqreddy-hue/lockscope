@@ -1,4 +1,5 @@
 dist
+dist-desktop
 coverage
 node_modules
 public/data/*.json

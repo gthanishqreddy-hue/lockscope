@@ -26,6 +26,19 @@ Nothing in the dashboard pretends to be live: every dataset is labelled *Bundled
 *Imported file* or *Local engine run*, theory is labelled *Theory*, and browser models are labelled
 *Browser simulation*.
 
+## Download and install
+
+LockScope also installs as a desktop app with Java bundled. It runs the engine on your computer
+and opens the dashboard in your browser, so you can start new experiments without any setup.
+Get it from the [latest release](https://github.com/gthanishqreddy-hue/lockscope/releases/latest):
+
+| Windows 10/11 | Linux | macOS | Anything with Java 17+ |
+|---|---|---|---|
+| `.msi` installer or portable `.zip` | `.deb`, `.rpm` or `.tar.gz` | `.dmg` (Apple silicon) | universal `.zip` |
+
+The packages are not code-signed, so Windows and macOS warn on first launch; see
+[docs/installing.md](docs/installing.md) for what to click, and for building them yourself.
+
 ## Screenshots
 
 | Overview | Execution Visualizer |
@@ -166,7 +179,7 @@ instructions and troubleshooting: [docs/deployment.md](docs/deployment.md).
 - [Algorithms](docs/algorithms.md): design, memory ordering, guarantees, limitations, tests
 - [Correctness testing](docs/correctness.md): checks, checker limits, reproducibility
 - [Benchmarking](docs/benchmarking.md): method, metrics, interpretation, threats to validity
-- [Local API](docs/api.md)
+- [Local API](docs/api.md), [Installing the desktop app](docs/installing.md)
 - [Deployment](docs/deployment.md), [Troubleshooting](docs/troubleshooting.md)
 - [Decision records](docs/decisions/), [Security](SECURITY.md), [Contributing](CONTRIBUTING.md)
 
