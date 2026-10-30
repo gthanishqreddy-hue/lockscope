@@ -121,8 +121,9 @@ jobs:
       - name: Uninstall
         shell: pwsh
         run: |
-          $entry = Get-ChildItem HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall, HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall |
-            Get-ItemProperty | Where-Object DisplayName -eq 'LockScope' | Select-Object -First 1
+          $keys = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall', 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall',
+            'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
+          $entry = Get-ChildItem $keys -ErrorAction SilentlyContinue | Get-ItemProperty | Where-Object DisplayName -eq 'LockScope' | Select-Object -First 1
           if (-not $entry) { throw 'LockScope is not listed under installed apps' }
           $p = Start-Process msiexec -ArgumentList '/x', $entry.PSChildName, '/qn' -Wait -PassThru
           if ($p.ExitCode -ne 0) { throw "uninstall exited with $($p.ExitCode)" }

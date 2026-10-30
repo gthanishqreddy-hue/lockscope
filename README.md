@@ -34,7 +34,7 @@ Get it from the [latest release](https://github.com/gthanishqreddy-hue/lockscope
 
 | Windows 10/11 | Linux | macOS | Anything with Java 17+ |
 |---|---|---|---|
-| `.msi` installer or portable `.zip` | `.deb`, `.rpm` or `.tar.gz` | `.dmg` (Apple silicon) | universal `.zip` |
+| `setup.exe`, `.msi` or portable `.zip` | `.deb`, `.rpm` or `.tar.gz` | `.dmg` (Apple silicon) | universal `.zip` |
 
 The packages are not code-signed, so Windows and macOS warn on first launch; see
 [docs/installing.md](docs/installing.md) for what to click, and for building them yourself.

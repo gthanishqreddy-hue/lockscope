@@ -4,7 +4,7 @@ no setup.
 
 | System | Download | Java needed? |
 |---|---|---|
-| Windows 10/11 (x64) | `...-windows-x64.msi`, or `...-windows-x64-portable.zip` | No, bundled |
+| Windows 10/11 (x64) | `...-windows-x64-setup.exe`, `...-windows-x64.msi` or `...-windows-x64-portable.zip` | No, bundled |
 | Ubuntu, Debian, Mint (x64) | `...-linux-amd64.deb` | No, bundled |
 | Fedora, RHEL, openSUSE (x64) | `...-linux-x86_64.rpm` | No, bundled |
 | Linux, no install (x64) | `...-linux-x64.tar.gz` | No, bundled |

@@ -9,7 +9,8 @@ Download from the [latest release](https://github.com/gthanishqreddy-hue/locksco
 
 | System | File | Java needed? |
 |---|---|---|
-| Windows 10/11 (x64) | `LockScope-<version>-windows-x64.msi` installer | No, bundled |
+| Windows 10/11 (x64) | `LockScope-<version>-windows-x64-setup.exe` installer | No, bundled |
+| Windows (x64), as an MSI | `LockScope-<version>-windows-x64.msi` (same app; for IT tools) | No, bundled |
 | Windows, no install | `LockScope-<version>-windows-x64-portable.zip` | No, bundled |
 | Ubuntu, Debian, Mint (x64) | `LockScope-<version>-linux-amd64.deb` | No, bundled |
 | Fedora, RHEL, openSUSE (x64) | `LockScope-<version>-linux-x86_64.rpm` | No, bundled |
@@ -21,8 +22,9 @@ Download from the [latest release](https://github.com/gthanishqreddy-hue/locksco
 
 ## Windows
 
-1. Run the `.msi`. It installs for your user only (no administrator rights needed) and adds
-   **LockScope** to the Start menu and the desktop.
+1. Run `LockScope-<version>-windows-x64-setup.exe` (or the `.msi`; both install the same app).
+   It installs for your user only (no administrator rights needed) and adds **LockScope** to the
+   Start menu and the desktop.
 2. Start **LockScope**. Your browser opens the dashboard.
 
 Uninstall from *Settings → Apps → Installed apps → LockScope*.
@@ -94,6 +96,7 @@ cd engine
 ./gradlew :server:universalZip        # build/installers/LockScope-<version>-universal.zip
 ./gradlew :server:jpackageImage       # build/installers/LockScope/ (app folder for this OS)
 ./gradlew :server:jpackage            # installer for this OS: .msi (needs WiX 3), .deb or .dmg
+./gradlew :server:jpackage -Pjpackage.type=exe   # Windows setup.exe (needs WiX 3)
 ./gradlew :server:jpackage -Pjpackage.type=rpm
 ```
 
