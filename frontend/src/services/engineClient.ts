@@ -123,10 +123,15 @@ async function request<T>(base: string, path: string, init: RequestInit = {}, ti
     if (e instanceof DOMException && e.name === 'AbortError') {
       throw new EngineError('The engine did not respond in time.', 'timeout');
     }
-    // A refused connection and a CORS rejection look identical to the page, so name both causes.
+    // A refused connection, a CORS rejection and a browser block on public sites reaching localhost
+    // all look identical to the page, so name every cause.
+    const hosted = !shouldAutoDetectEngine(window.location.hostname, false);
     throw new EngineError(
       `Cannot reach the local engine at ${normalize(base)}. Start it with: cd engine && ./gradlew :server:run. ` +
-        `If it is already running, allow this page with --allowed-origins ${window.location.origin}`,
+        `If it is already running, allow this page with --allowed-origins ${window.location.origin}.` +
+        (hosted
+          ? ' Some browsers also block websites from reaching your own computer; if so, run the dashboard locally (cd frontend && npm run dev).'
+          : ''),
       'unreachable',
     );
   } finally {

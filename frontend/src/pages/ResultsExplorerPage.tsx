@@ -138,7 +138,7 @@ export function ResultsExplorerPage() {
                 rows={filtered}
                 rowKey={(r) => r.key}
                 pageSize={20}
-                initialSort={{ key: 'score', dir: 'desc' }}
+                initialSort={{ key: 'profile', dir: 'asc' }}
                 empty={
                   <EmptyState
                     icon={<Database size={28} aria-hidden />}

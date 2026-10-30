@@ -48,6 +48,11 @@ A check that cannot fail proves nothing. Therefore:
   (`ConcurrentSetStressTest`), and the checker is unit-tested on hand-built histories with known
   answers (`SetLinearizabilityCheckerTest`).
 
+Detection power depends on real parallelism and run length. On a machine with few cores, a very
+small workload can let each thread finish before the others start, so even the no-op lock shows no
+race; the suite then reports the control as **missed** and exits with code 1 rather than hiding it.
+Use at least about 100,000 operations per thread and some critical-section work (the defaults do).
+
 ## Reproducibility
 
 Each `CheckResult` records check, algorithm, threads, operations, **seed**, status, failure

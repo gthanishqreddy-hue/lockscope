@@ -132,7 +132,7 @@ class ApiServerTest {
     void correctnessExperimentRunsToCompletionAndExports() throws Exception {
         HttpResponse<String> created = post("/experiments", "{\"type\":\"correctness\",\"correctness\":{"
                 + "\"target\":\"locks\",\"algorithms\":[\"ttas\",\"none\"],\"threads\":4,"
-                + "\"operationsPerThread\":20000,\"runs\":1,\"seed\":7}}");
+                + "\"operationsPerThread\":200000,\"criticalSectionWork\":20,\"runs\":1,\"seed\":7}}");
         assertEquals(202, created.statusCode(), created.body());
         String id = JSON.readTree(created.body()).get("id").asText();
 

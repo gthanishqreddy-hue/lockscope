@@ -82,7 +82,7 @@ function engineDetectionEnabled(): boolean {
 }
 
 const NOT_CHECKED =
-  'Not checked: this dashboard is hosted online. Use "Look for a local engine" to connect to one running on this computer.';
+  'this dashboard is hosted online, so it has not looked for a local engine yet. Use "Look for a local engine" to connect to one on this computer.';
 
 /** Asks the engine for its health and capabilities; never throws. */
 async function checkEngine(url: string): Promise<EngineState> {
