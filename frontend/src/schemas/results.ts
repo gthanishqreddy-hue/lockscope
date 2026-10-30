@@ -35,6 +35,8 @@ export interface Methodology {
   measurementMillis: number;
   gcProfiler: boolean;
   errorDefinition: string;
+  /** Forked JVM options; null in files written before they were recorded. */
+  jvmArgs: string[] | null;
 }
 
 export interface Workload {
@@ -296,6 +298,8 @@ function parseBenchmark(o: Record<string, Json>): BenchmarkReport {
       measurementMillis: num(m, 'measurementMillis', 'methodology'),
       gcProfiler: bool(m, 'gcProfiler', 'methodology'),
       errorDefinition: str(m, 'errorDefinition', 'methodology'),
+      jvmArgs:
+        m['jvmArgs'] === null || m['jvmArgs'] === undefined ? null : strings(m, 'jvmArgs', 'methodology'),
     },
     workload: {
       profile: str(w, 'profile', 'workload', 100),

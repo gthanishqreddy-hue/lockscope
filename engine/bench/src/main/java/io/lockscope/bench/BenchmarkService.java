@@ -54,6 +54,14 @@ public final class BenchmarkService {
 
     private static final double HIGH_VARIABILITY = 0.10;
 
+    /**
+     * Options for every forked benchmark JVM, recorded in each report. The initial heap is kept
+     * small so forks start on machines short of memory; the benchmarks allocate almost nothing,
+     * so heap growth does not affect the measurements. (Reports from before this field existed
+     * used -Xms512m -Xmx1g.)
+     */
+    public static final List<String> FORK_JVM_ARGS = List.of("-Xms64m", "-Xmx1g");
+
     private BenchmarkService() {}
 
     /**
@@ -99,7 +107,8 @@ public final class BenchmarkService {
                 sample ? "ns/op" : "ops/us", request.forks(), request.warmupIterations(), request.warmupMillis(),
                 request.measurementIterations(), request.measurementMillis(), request.gcProfiler(),
                 "Half-width of the 99.9% confidence interval of the mean across measurement iterations "
-                        + "(Student's t), as computed by JMH");
+                        + "(Student's t), as computed by JMH",
+                FORK_JVM_ARGS);
         boolean lock = request.kind().equals("lock");
         BenchmarkReport.Workload workload = new BenchmarkReport.Workload(request.profile(),
                 lock ? request.criticalWork() : null, lock ? request.nonCriticalWork() : null,
@@ -123,7 +132,7 @@ public final class BenchmarkService {
                 .mode(sample ? Mode.SampleTime : Mode.Throughput)
                 .timeUnit(sample ? TimeUnit.NANOSECONDS : TimeUnit.MICROSECONDS)
                 .shouldFailOnError(true)
-                .jvmArgsAppend("-Xms512m", "-Xmx1g");
+                .jvmArgsAppend(FORK_JVM_ARGS.toArray(String[]::new));
         if (lock) {
             options.include("^" + Pattern.quote(LockBenchmark.class.getName()) + "\\.acquireRelease$")
                     .param("lock", algorithm)

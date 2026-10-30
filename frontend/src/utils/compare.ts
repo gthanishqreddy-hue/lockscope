@@ -64,6 +64,13 @@ export function comparabilityIssues(reports: BenchmarkReport[]): ComparabilityIs
     }
     const m = r.methodology;
     const fm = first.methodology;
+    const args = (a: string[] | null) => (a === null ? 'not recorded' : a.join(' '));
+    if (args(m.jvmArgs) !== args(fm.jvmArgs)) {
+      issues.push({
+        severity: 'warning',
+        message: `${label} used different JVM options: ${args(m.jvmArgs)} vs ${args(fm.jvmArgs)}.`,
+      });
+    }
     if (
       m.forks !== fm.forks ||
       m.warmupIterations !== fm.warmupIterations ||

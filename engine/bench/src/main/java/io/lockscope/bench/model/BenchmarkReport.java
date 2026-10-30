@@ -31,6 +31,7 @@ public record BenchmarkReport(
      * @param mode {@code thrpt} (operations per time unit) or {@code sample} (sampled latency)
      * @param scoreUnit unit of {@link Measurement#score()}, as reported by JMH
      * @param errorDefinition what {@link Measurement#scoreError()} means
+     * @param jvmArgs options of the forked benchmark JVMs; null in files written before 0.1.0 recorded them
      */
     public record Methodology(
             String tool,
@@ -42,7 +43,8 @@ public record BenchmarkReport(
             int measurementIterations,
             int measurementMillis,
             boolean gcProfiler,
-            String errorDefinition) {}
+            String errorDefinition,
+            List<String> jvmArgs) {}
 
     /**
      * Workload shared by every measurement in the file. Lock fields are null for set benchmarks

@@ -56,6 +56,7 @@ export function benchmarkReport(overrides: Partial<BenchmarkReport> = {}): Bench
       measurementMillis: 1000,
       gcProfiler: true,
       errorDefinition: '99.9% CI',
+      jvmArgs: ['-Xms64m', '-Xmx1g'],
     },
     workload: {
       profile: 'lock-high-contention',

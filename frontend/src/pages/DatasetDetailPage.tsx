@@ -133,6 +133,10 @@ export function DatasetDetailPage() {
                 <dd>
                   {report.methodology.measurementIterations} × {report.methodology.measurementMillis} ms
                 </dd>
+                <dt>JVM options</dt>
+                <dd className="mono small">
+                  {report.methodology.jvmArgs ? report.methodology.jvmArgs.join(' ') : 'not recorded'}
+                </dd>
                 <dt>Error bars</dt>
                 <dd className="small">{report.methodology.errorDefinition}</dd>
               </dl>

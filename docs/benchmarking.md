@@ -14,7 +14,8 @@ programmatically by `BenchmarkService`:
   field; the set benchmark sinks results into a `Blackhole`).
 - **Keys are pre-boxed** so the set benchmark does not measure `Integer` allocation.
 - **Allocation** per operation comes from JMH's GC profiler (`gc.alloc.rate.norm`).
-- **Forked JVM options:** `-Xms512m -Xmx1g`.
+- **Forked JVM options:** `-Xms64m -Xmx1g`, recorded in each report as `methodology.jvmArgs`. Reports
+  written before that field existed (including the bundled samples) used `-Xms512m -Xmx1g`.
 
 ### Workloads
 

@@ -100,6 +100,8 @@ describe('comparability', () => {
     expect(issues.find((i) => i.severity === 'blocking')?.message).toMatch(/critical work 500 vs 10/);
     expect(issues.find((i) => i.severity === 'warning')?.message).toMatch(/16 vs 8 CPUs/);
     const c = benchmarkReport({ methodology: { ...a.methodology, mode: 'sample', scoreUnit: 'ns/op' } });
+    const old = benchmarkReport({ methodology: { ...a.methodology, jvmArgs: null } });
+    expect(comparabilityIssues([a, old])[0]?.message).toMatch(/JVM options: not recorded vs -Xms64m -Xmx1g/);
     expect(comparabilityIssues([a, c])[0]?.severity).toBe('blocking');
   });
 });
