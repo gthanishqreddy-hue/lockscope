@@ -151,6 +151,8 @@ jobs:
           rpm -qip out/*.rpm
       - name: Install the .deb and smoke-test the installed app
         run: |
+          # The runner has no desktop environment; the package's menu entry needs these directories.
+          sudo mkdir -p /etc/xdg/menus /usr/share/applications /usr/share/desktop-directories
           sudo apt-get install -y -q ./out/*.deb
           app=$(dpkg -L lockscope | grep '/bin/LockScope$')
           echo "installed: $app"

@@ -52,6 +52,11 @@ Remove with `sudo apt remove lockscope` or `sudo dnf remove lockscope`.
 
 Without installing: `tar xzf LockScope-<version>-linux-x64.tar.gz && LockScope/bin/LockScope`.
 
+On a system without a desktop environment the package's menu entry cannot be registered and the
+install stops with `No writable system menu directory found`. Run
+`sudo mkdir -p /etc/xdg/menus /usr/share/applications /usr/share/desktop-directories` and install
+again, or use the `.tar.gz`.
+
 On a machine without a display (a server, WSL without GUI support), the app prints the address
 and runs until Ctrl+C; open the address in a browser on the same machine.
 

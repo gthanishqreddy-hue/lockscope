@@ -73,6 +73,7 @@ def jpackageInput = tasks.register('jpackageInput', Sync) {
     into layout.buildDirectory.dir('jpackage/input')
     from(appClasspath)
     into('dashboard') { from(dashboardDir) { exclude '**/*.map' } }
+    from("${rootProject.projectDir}/../LICENSE")
 }
 
 // Native packages with a bundled Java runtime. jpackage only builds for the OS it runs on.
@@ -128,7 +129,11 @@ tasks.register('jpackage', Exec) {
     group = 'distribution'
     description = 'Builds a native installer with jpackage (-Pjpackage.type=msi|exe|deb|rpm|dmg|pkg).'
     def type = findProperty('jpackage.type') ?: (windows ? 'msi' : mac ? 'dmg' : 'deb')
-    def args = [jpackageTool, '--type', type] + commonArgs + ['--license-file', "${rootProject.projectDir}/../LICENSE"]
+    def args = [jpackageTool, '--type', type] + commonArgs
+    if (!mac) {
+        // On macOS this would be a click-through agreement when opening the .dmg; LICENSE is in the app.
+        args += ['--license-file', "${rootProject.projectDir}/../LICENSE"]
+    }
     if (windows) {
         // Package the app folder so the installer also contains Start LockScope.bat.
         dependsOn jpackageImage
