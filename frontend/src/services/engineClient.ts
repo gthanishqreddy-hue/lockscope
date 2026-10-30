@@ -100,6 +100,11 @@ export function validateEngineUrl(url: string): string | null {
   return null;
 }
 
+/** Whether to look for the engine automatically: when served locally, or after an earlier opt-in. */
+export function shouldAutoDetectEngine(pageHostname: string, optedIn: boolean): boolean {
+  return optedIn || ['localhost', '127.0.0.1', '[::1]'].includes(pageHostname);
+}
+
 function normalize(base: string): string {
   return base.replace(/\/+$/, '');
 }

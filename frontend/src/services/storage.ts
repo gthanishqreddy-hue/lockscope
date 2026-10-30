@@ -27,4 +27,5 @@ export const STORAGE_KEYS = {
   engineUrl: 'lockscope.engineUrl',
   datasets: 'lockscope.datasets.v1',
   sidebar: 'lockscope.sidebarCollapsed',
+  engineOptIn: 'lockscope.engineOptIn',
 } as const;

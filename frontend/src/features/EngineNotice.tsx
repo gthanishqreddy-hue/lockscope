@@ -7,7 +7,7 @@ import { Callout, CopyBlock } from '../components/ui';
  * get the same result without it.
  */
 export function EngineNotice({ command, what }: { command?: string; what: string }) {
-  const { engineState } = useAppState();
+  const { engineState, refreshEngine } = useAppState();
   if (engineState.state === 'connected') return null;
   return (
     <div className="stack">
@@ -20,6 +20,13 @@ export function EngineNotice({ command, what }: { command?: string; what: string
         <Link to="/settings">Settings</Link>), or run the same experiment from the command line and import the
         JSON file it writes in the Results Explorer.
       </Callout>
+      {engineState.state !== 'checking' && (
+        <div>
+          <button type="button" className="btn btn-sm" onClick={() => void refreshEngine()}>
+            Look for a local engine
+          </button>
+        </div>
+      )}
       {command && <CopyBlock text={command} label="Copy the equivalent CLI command" />}
     </div>
   );

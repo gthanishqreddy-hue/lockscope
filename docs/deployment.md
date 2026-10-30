@@ -23,11 +23,33 @@ The output is `frontend/dist/`. It contains `_redirects` (single-page-app fallba
 To serve from a sub-path (e.g. a GitHub Pages project site), build with
 `BASE_PATH=/lockscope/ npm run build`.
 
-## 2. Vercel (the live deployment)
+## 2. GitHub Pages (the live deployment)
 
-The public dashboard is deployed on Vercel's free Hobby plan, linked to the GitHub repository:
-every push to `main` builds and redeploys it, and pull requests get preview URLs.
-`frontend/vercel.json` sets the build (`npm ci`, `npm run build`, output `dist`), the
+Live: **https://gthanishqreddy-hue.github.io/lockscope/**
+
+`.github/workflows/pages.yml` builds and publishes the dashboard on every push to `main` that
+touches `frontend/`. GitHub Pages is free for public repositories (subject to GitHub's published
+usage limits) and needs no secrets: the workflow uses the repository's own token. Because Pages
+cannot set headers or rewrites, the build:
+
+- serves from the `/<repository>/` sub-path (`BASE_PATH`),
+- embeds the Content-Security-Policy as a `<meta>` tag (`CSP_META=1`; `frame-ancestors` cannot be
+  set this way),
+- copies `index.html` to `404.html` so deep links load the app (with HTTP status 404).
+
+One-time setup on a fork: **Settings → Pages → Build and deployment → Source: GitHub Actions**, then
+push or run the workflow manually.
+
+On a hosted copy the dashboard does not probe for a local engine until the visitor clicks
+**Look for a local engine** (Settings, or any experiment form); after one successful connection it
+keeps detecting automatically in that browser. This avoids failed requests and browser
+local-network permission prompts for visitors who have no engine.
+
+## 3. Vercel (alternative, free)
+
+`frontend/vercel.json` configures Vercel's free Hobby plan when the project is linked to the GitHub
+repository, so every push to `main` builds and redeploys it and pull requests get preview URLs.
+It sets the build (`npm ci`, `npm run build`, output `dist`), the
 single-page-app fallback and the same security headers as `_headers`. The commit hash and the
 repository link shown in Settings are taken from Vercel's git environment variables.
 
@@ -39,7 +61,7 @@ To set it up on your own account:
 4. Deploy. No payment details are needed on the Hobby plan; Vercel's fair-use limits apply and
    may change.
 
-## 3. Cloudflare Pages (alternative, free)
+## 4. Cloudflare Pages (alternative, free)
 
 Free-plan limits, as documented by Cloudflare on 2026-10-30
 (<https://developers.cloudflare.com/pages/platform/limits/>): 500 builds per month, 1 concurrent
@@ -75,7 +97,7 @@ cd frontend && npm run build
 npx wrangler pages deploy dist --project-name lockscope
 ```
 
-## 4. Verify a deployment
+## 5. Verify a deployment
 
 - Open the site and each route directly (e.g. `/results`, `/learn/linearizability`): the
   `_redirects` fallback must serve the app, not a 404.
@@ -83,12 +105,12 @@ npx wrangler pages deploy dist --project-name lockscope
 - Settings shows the build's commit and "Static (no engine connected)" unless you run an engine.
 - Browser devtools: no console errors; response headers include `Content-Security-Policy`.
 
-## 5. Using a deployed dashboard with a local engine
+## 6. Using a deployed dashboard with a local engine
 
 Start the engine with the deployed origin allowed:
 
 ```bash
-cd engine && ./gradlew :server:run --args="--allowed-origins https://your-project.pages.dev"
+cd engine && ./gradlew :server:run --args="--allowed-origins https://gthanishqreddy-hue.github.io"
 ```
 
 Browsers increasingly restrict public websites from calling `localhost` (Chromium's Private
@@ -96,7 +118,7 @@ Network Access / Local Network Access may show a permission prompt or block the 
 answers the PNA preflight). If it is blocked, run the dashboard locally (`npm run dev`), which
 always works, or use the CLI and import the JSON files.
 
-## 6. Publishing updated results
+## 7. Publishing updated results
 
 ```bash
 cd engine && ./gradlew :bench:run --args="bench --profile set-balanced --out benchmark-results/sample/sets-balanced.json"
@@ -112,4 +134,4 @@ git add benchmark-results/sample frontend/public/data && git commit -m "Update m
 | Blank page, assets 404 under a sub-path | rebuild with `BASE_PATH=/your-path/` |
 | "Bundled datasets unavailable" | `data/index.json` missing or blocked; rerun `scripts/export-results.mjs` |
 | Build fails on Cloudflare with Node errors | set `NODE_VERSION=22` |
-| Engine calls blocked from the deployed site | see section 5 |
+| Engine calls blocked from the deployed site | see section 6 |

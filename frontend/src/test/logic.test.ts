@@ -13,7 +13,7 @@ import {
   validateCorrectness,
 } from '../utils/experimentForms';
 import { efficiency, intervalsOverlap, interpret, scalingSeries, speedup } from '../utils/scaling';
-import { validateEngineUrl } from '../services/engineClient';
+import { shouldAutoDetectEngine, validateEngineUrl } from '../services/engineClient';
 import { defaultBenchmarkForm, defaultCorrectnessForm } from '../features/ExperimentForms';
 import { benchmarkReport, correctnessReport, measurement } from './fixtures';
 
@@ -177,6 +177,15 @@ describe('experiment forms', () => {
     expect(validateCorrectness(defaultCorrectnessForm('sets'))).toEqual({});
     expect(validateCorrectness({ ...defaultCorrectnessForm('sets'), threads: 64 }).threads).toMatch(/32/);
     expect(validateCorrectness({ ...defaultCorrectnessForm('locks'), runs: 0 }).runs).toBeDefined();
+  });
+});
+
+describe('engine auto-detection', () => {
+  it('probes automatically only when served locally or after an opt-in', () => {
+    expect(shouldAutoDetectEngine('localhost', false)).toBe(true);
+    expect(shouldAutoDetectEngine('127.0.0.1', false)).toBe(true);
+    expect(shouldAutoDetectEngine('gthanishqreddy-hue.github.io', false)).toBe(false);
+    expect(shouldAutoDetectEngine('gthanishqreddy-hue.github.io', true)).toBe(true);
   });
 });
 

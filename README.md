@@ -1,6 +1,12 @@
 # LockScope
 
+[![CI](https://github.com/gthanishqreddy-hue/lockscope/actions/workflows/ci.yml/badge.svg)](https://github.com/gthanishqreddy-hue/lockscope/actions/workflows/ci.yml)
+[![Deploy](https://github.com/gthanishqreddy-hue/lockscope/actions/workflows/pages.yml/badge.svg)](https://github.com/gthanishqreddy-hue/lockscope/actions/workflows/pages.yml)
+
 **Understand concurrency. Prove correctness. Measure performance.**
+
+**Live dashboard:** https://gthanishqreddy-hue.github.io/lockscope/ (static demo with the bundled
+measurements; run the engine locally to start new experiments)
 
 LockScope is a concurrent-systems performance lab: textbook locks and concurrent linked lists
 implemented in Java, a correctness harness that tries to break them (and proves it can, with
@@ -139,9 +145,10 @@ histories per run), 8 threads, 3 seeds.
 
 ## Deployment (free)
 
-Build `frontend/` and host `frontend/dist` on Cloudflare Pages (Git integration: root `frontend`,
-build `npm ci && npm run build`, output `dist`). The engine always runs locally. Step-by-step
-instructions, verified free-plan limits and troubleshooting: [docs/deployment.md](docs/deployment.md).
+The dashboard is deployed to GitHub Pages by `.github/workflows/pages.yml` on every push to `main`.
+Vercel (`frontend/vercel.json`) and Cloudflare Pages (`frontend/public/_redirects`, `_headers`)
+configurations are included as alternatives. The engine always runs locally. Step-by-step
+instructions and troubleshooting: [docs/deployment.md](docs/deployment.md).
 
 ## Documentation
 

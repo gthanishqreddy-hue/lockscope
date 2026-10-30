@@ -96,7 +96,7 @@ export function SettingsPage() {
         description="The Java engine runs on your own computer and serves an API on the loopback interface only."
         actions={
           <button type="button" className="btn btn-sm" onClick={() => void refreshEngine()}>
-            <RefreshCw size={14} aria-hidden /> Check now
+            <RefreshCw size={14} aria-hidden /> Look for a local engine
           </button>
         }
       >

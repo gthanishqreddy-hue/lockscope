@@ -20,6 +20,7 @@ import {
   DEFAULT_ENGINE_URL,
   engine,
   EngineError,
+  shouldAutoDetectEngine,
   validateEngineUrl,
   type EngineCapabilities,
   type EngineHealth,
@@ -70,6 +71,19 @@ const AppStateContext = createContext<AppStateValue | null>(null);
 
 const ENGINE_POLL_MS = 15_000;
 
+/**
+ * On a hosted copy of the dashboard most visitors have no engine, and probing 127.0.0.1 would log
+ * failed requests and may trigger the browser's local-network permission prompt. Detection is
+ * therefore automatic only when the dashboard itself runs locally, or after the visitor has
+ * connected once (remembered in this browser).
+ */
+function engineDetectionEnabled(): boolean {
+  return shouldAutoDetectEngine(window.location.hostname, readStorage(STORAGE_KEYS.engineOptIn) === '1');
+}
+
+const NOT_CHECKED =
+  'Not checked: this dashboard is hosted online. Use "Look for a local engine" to connect to one running on this computer.';
+
 /** Asks the engine for its health and capabilities; never throws. */
 async function checkEngine(url: string): Promise<EngineState> {
   try {
@@ -104,8 +118,13 @@ export function AppStateProvider({
 }) {
   const [theme, setThemeState] = useState<ThemePreference>(initialTheme);
   const [engineUrl, setEngineUrlState] = useState(initialEngineUrl);
+  const [autoDetect, setAutoDetect] = useState(engineDetectionEnabled);
   const [engineState, setEngineState] = useState<EngineState>(() =>
-    pollEngine ? { state: 'checking' } : { state: 'disconnected', error: 'Engine checks are disabled.' },
+    !pollEngine
+      ? { state: 'disconnected', error: 'Engine checks are disabled.' }
+      : autoDetect
+        ? { state: 'checking' }
+        : { state: 'disconnected', error: NOT_CHECKED },
   );
   const [bundled, setBundled] = useState<Dataset[]>([]);
   const [bundledStatus, setBundledStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -134,14 +153,22 @@ export function AppStateProvider({
 
   const dismissNotice = useCallback((id: number) => setNotices((n) => n.filter((x) => x.id !== id)), []);
 
-  /** User-triggered check: shows "checking" immediately, then the result. */
+  /**
+   * User-triggered check: shows "checking" immediately, then the result. A successful check turns
+   * on automatic detection for this browser.
+   */
   const refreshEngine = useCallback(async () => {
     setEngineState((s) => ({ ...s, state: s.state === 'connected' ? 'connected' : 'checking' }));
-    setEngineState(await checkEngine(engineUrl));
+    const next = await checkEngine(engineUrl);
+    setEngineState(next);
+    if (next.state === 'connected') {
+      writeStorage(STORAGE_KEYS.engineOptIn, '1');
+      setAutoDetect(true);
+    }
   }, [engineUrl]);
 
   useEffect(() => {
-    if (!pollEngine) return undefined;
+    if (!pollEngine || !autoDetect) return undefined;
     let active = true;
     const poll = () => {
       void checkEngine(engineUrl).then((next) => {
@@ -154,7 +181,7 @@ export function AppStateProvider({
       active = false;
       clearInterval(timer);
     };
-  }, [engineUrl, pollEngine]);
+  }, [engineUrl, pollEngine, autoDetect]);
 
   const setEngineUrl = useCallback((url: string) => {
     const error = validateEngineUrl(url);

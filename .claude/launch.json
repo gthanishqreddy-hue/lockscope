@@ -8,6 +8,12 @@
       "port": 5173
     },
     {
+      "name": "pages-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "frontend", "exec", "--", "vite", "preview", "frontend", "--base", "/lockscope/", "--port", "4174"],
+      "port": 4174
+    },
+    {
       "name": "engine-api",
       "runtimeExecutable": "java",
       "runtimeArgs": ["-cp", "engine/server/build/install/lockscope-server/lib/*", "io.lockscope.server.LockScopeServer", "--allowed-origins", "http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174"],
