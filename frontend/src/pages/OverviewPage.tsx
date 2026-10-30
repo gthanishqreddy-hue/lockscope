@@ -10,8 +10,15 @@ import { formatDate, formatDuration } from '../utils/format';
 export function OverviewPage() {
   const { engineState } = useAppState();
   const { benchmarks, correctness, all, bundledStatus, bundledError } = useDatasets();
+  // Your own runs come first in the list; among the rest, show the widest thread sweep.
+  const lockThroughput = benchmarks.filter(
+    (d) => d.report.kind === 'lock' && d.report.methodology.mode === 'thrpt',
+  );
   const highlight =
-    benchmarks.find((d) => d.report.kind === 'lock' && d.report.methodology.mode === 'thrpt') ??
+    lockThroughput.find((d) => d.source !== 'bundled-sample') ??
+    [...lockThroughput].sort(
+      (a, b) => Math.max(...b.report.workload.threadCounts) - Math.max(...a.report.workload.threadCounts),
+    )[0] ??
     benchmarks[0];
   const latestCorrectness = correctness[0];
   const textbookLocks = LOCKS.filter((l) => l.category === 'textbook').length;

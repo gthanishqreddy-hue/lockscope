@@ -1,6 +1,14 @@
 {
   "datasets": [
     {
+      "file": "ci-linux-locks-high-contention.json",
+      "description": "Lock benchmark (lock-high-contention, thrpt): JMH thrpt, 2 fork(s) x 5 x 1000 ms, on Linux amd64, 4 CPUs, Java 21.0.13."
+    },
+    {
+      "file": "ci-linux-sets-read-heavy.json",
+      "description": "Concurrent set benchmark (set-read-heavy, thrpt): JMH thrpt, 2 fork(s) x 5 x 1000 ms, on Linux amd64, 4 CPUs, Java 21.0.13."
+    },
+    {
       "file": "correctness-locks.json",
       "description": "Correctness suite (locks): 42 passed, 0 failed, 6 controls caught, on Windows 11 amd64, 8 CPUs, Java 17.0.20.1."
     },

@@ -47,7 +47,8 @@ function baseOption(theme: ChartTheme): EChartsCoreOption {
       pageTextStyle: { color: theme.textSecondary },
     },
     // ECharts 6 keeps axis labels inside the container by default (outerBounds), no containLabel needed.
-    grid: { left: 8, right: 16, top: 40, bottom: 8 },
+    // top leaves room for the legend row and, below it, the y-axis title.
+    grid: { left: 8, right: 16, top: 64, bottom: 8 },
   };
 }
 

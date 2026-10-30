@@ -16,7 +16,7 @@ negative controls), JMH benchmarks with honest statistics, and a dashboard to ex
   baselines; coarse-grained, fine-grained, optimistic, lazy and lock-free (Harris–Michael) sets.
 - **Correctness:** lost-update and overlap checks for locks; partitioned reference model,
   conservation and bounded linearizability checks for sets; seed-reproducible JSON reports;
-  jcstress Java Memory Model tests for every lock, run in CI on x64 and ARM64.
+  jcstress tests for every lock and every set, run in CI on x64 and ARM64.
 - **Benchmarks:** JMH throughput or latency sampling, thread sweeps, 99.9% confidence intervals,
   allocation per operation, speedup and efficiency, JSON + CSV export.
 - **Dashboard (React + TypeScript):** 10 pages, works as a free static site from bundled measured
@@ -26,12 +26,20 @@ Nothing in the dashboard pretends to be live: every dataset is labelled *Bundled
 *Imported file* or *Local engine run*, theory is labelled *Theory*, and browser models are labelled
 *Browser simulation*.
 
+## Screenshots
+
+| Overview | Execution Visualizer |
+|---|---|
+| ![Overview: lock throughput across thread counts and correctness evidence](docs/images/overview.png) | ![Execution Visualizer stepping through the MCS queue lock](docs/images/visualizer.png) |
+| **Data Structure Lab** | **Correctness Center** |
+| ![Lazy list removal: logical then physical](docs/images/data-structure-lab.png) | ![Correctness report with negative controls caught](docs/images/correctness.png) |
+
 ## Architecture
 
 ```text
 engine/core    locks, sets, correctness harness (no dependencies)
    ▲  ▲
-   │  └─ engine/jcstress  Java Memory Model tests for every lock
+   │  └─ engine/jcstress  jcstress tests for every lock and set
    │
 engine/bench   JMH benchmarks, services, result schema, `lockscope` CLI ──► benchmark-results/*.json
    ▲
@@ -76,7 +84,7 @@ On Windows use `gradlew.bat` from `cmd`/PowerShell, or Git Bash for the commands
 |---|---|
 | Engine build + tests | `cd engine && ./gradlew build` |
 | Heavier stress tier | `./gradlew test -Plockscope.stress=heavy` |
-| jcstress (JMM) tests | `./gradlew :jcstress:jcstress [-Pjcstress.mode=tough]` |
+| jcstress tests | `./gradlew :jcstress:jcstress [-Pjcstress.mode=tough] [-Pjcstress.tests=Lazy] [-Pjcstress.cpus=4]` |
 | Correctness suite | `./gradlew :bench:run --args="stress --target locks\|sets [--runs N --seed S ...]"` |
 | Benchmark | `./gradlew :bench:run --args="bench --profile NAME [--threads 1,2,4,8 --forks 2 ...]"` |
 | List profiles | `./gradlew :bench:run --args="profiles"` |
@@ -92,10 +100,12 @@ contains the command that reproduces it.
 
 ## Bundled measurements
 
-`benchmark-results/sample/` holds real JMH and correctness runs, measured on the development machine
+`benchmark-results/sample/` holds real JMH and correctness runs. Most were measured on the development machine
 (Windows 11, 8 logical CPUs, Microsoft OpenJDK 17.0.20, JMH 1.37; see each file's `environment`).
 They were taken on a laptop that was not otherwise idle, so treat them as illustrations; differences
-smaller than the reported error bars are noise. Summary: see [Measured results](#measured-results).
+smaller than the reported error bars are noise. Two more (`ci-linux-*.json`) were measured on a 4-CPU GitHub Actions
+Linux runner with Java 21 via the manual `Benchmarks` workflow; the Comparison page lets you overlay them on the Windows
+runs and flags the different environment. Summary: see [Measured results](#measured-results).
 
 ## Measured results
 

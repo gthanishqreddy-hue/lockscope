@@ -15,3 +15,4 @@
 | `npm ci` fails | Use Node 20.19+ or 22+. Delete `node_modules` and retry. |
 | Port 8787 in use | `./gradlew :server:run --args="--port 8790"`, then set `http://127.0.0.1:8790` in Settings. |
 | `git` warns *Filename too long* (Windows) | The checkout path plus `node_modules` exceeds 260 characters. Clone to a short path such as `C:\src\lockscope`, or run `git config core.longpaths true`. |
+| jcstress reports `[VM ERROR]` with *insufficient memory* or *Not enough memory resources* | The machine ran out of committed memory: jcstress runs many test JVMs at once. Close other programs or limit parallelism with `-Pjcstress.cpus=4` (or 2). These are infrastructure errors, not test failures, but the task still fails so they are not overlooked. |

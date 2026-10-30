@@ -40,6 +40,7 @@ jobs:
     name: Memory model (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
     needs: engine
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:

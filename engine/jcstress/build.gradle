@@ -1,5 +1,6 @@
 // jcstress tests: Java Memory Model stress tests for every lock (see docs/correctness.md).
 // Run with ./gradlew :jcstress:jcstress [-Pjcstress.mode=sanity|quick|default|tough]
+//   [-Pjcstress.tests=<regex>] [-Pjcstress.cpus=<n>]
 plugins {
     id 'java'
 }
@@ -26,6 +27,10 @@ tasks.register('jcstress', JavaExec) {
     // Small heaps: jcstress runs many test JVMs at once, and default heap reservations can
     // exhaust the commit limit on a laptop ("unable to create native thread").
     args = ['-m', mode, '-r', reportDir.absolutePath, '-jvmArgsPrepend', '-Xms32m -Xmx256m']
+    // Fewer CPUs means fewer test JVMs at once; use on machines short of memory.
+    if (project.hasProperty('jcstress.cpus')) {
+        args += ['-c', project.property('jcstress.cpus')]
+    }
     if (project.hasProperty('jcstress.tests')) {
         args += ['-t', project.property('jcstress.tests')]
     }

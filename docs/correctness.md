@@ -101,7 +101,24 @@ reports every outcome it observed.
 | `<Lock>Visibility` | one thread writes `x = 1; y = 1` under the lock, the other reads `y, x` under the lock | `1, 0` or `0, 1` (a torn or reordered view) |
 
 The `NoLock` versions mark those outcomes *acceptable-interesting* instead of forbidden, and the
-report shows that jcstress observes them. Any forbidden outcome fails the Gradle task (verified with a
+report shows that jcstress observes them.
+
+Every concurrent set has five more tests (`<Set><Test>`), each a race where a broken implementation
+misbehaves visibly:
+
+| Test | Race | Only allowed results |
+|---|---|---|
+| `SameKeyAdd` | two threads `add(1)` on an empty set | exactly one succeeds |
+| `SameKeyRemove` | two threads `remove(1)` on `{1}` | exactly one succeeds |
+| `AddRemove` | `add(1)` races `remove(1)`, then `contains(1)` | one of the two serial orders |
+| `AdjacentAdd` | `add(1)` and `add(2)` into the same gap | both succeed and both are present |
+| `AdjacentRemove` | `remove(1)` and `remove(2)` on `{1, 2}` | both succeed and both are gone |
+
+`UnsyncList*` runs the same tests on a list with no synchronization. In one local quick run jcstress
+observed it lose inserts about 8.0 million times, resurrect a removed element 12.1 million times,
+add a duplicate 11.3 million times and remove the same element twice 18.3 million times. It never
+caught the control in `AddRemove`, so that test is the weakest of the five. None of the five real
+sets produced a forbidden outcome, locally or in CI. Any forbidden outcome fails the Gradle task (verified with a
 deliberately failing probe test).
 
 ```bash
