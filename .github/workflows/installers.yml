@@ -93,13 +93,41 @@ jobs:
           Add-Content $env:GITHUB_PATH $bin.FullName
       - name: Build
         working-directory: engine
-        run: ./gradlew.bat --no-daemon :server:jpackage -Pjpackage.type=msi
+        run: |
+          ./gradlew.bat --no-daemon :server:jpackage -Pjpackage.type=msi
+          ./gradlew.bat --no-daemon :server:jpackage -Pjpackage.type=exe
       - name: Collect
         run: |
           v=$(sed -n "s/.*version = '\(.*\)'.*/\1/p" engine/build.gradle | head -1)
           mkdir -p out
           mv engine/server/build/installers/LockScope-*.msi "out/LockScope-$v-windows-x64.msi"
+          mv engine/server/build/installers/LockScope-*.exe "out/LockScope-$v-windows-x64-setup.exe"
           (cd engine/server/build/installers && 7z a -tzip -bso0 "$GITHUB_WORKSPACE/out/LockScope-$v-windows-x64-portable.zip" LockScope)
+      # Each installer is installed silently, checked, smoke-tested and (setup.exe) removed again.
+      - name: Install setup.exe
+        shell: pwsh
+        timeout-minutes: 10
+        run: |
+          $setup = (Get-ChildItem out/*-setup.exe).FullName
+          # jpackage's setup.exe passes its arguments on to msiexec, so /qn installs silently.
+          $p = Start-Process $setup -ArgumentList '/qn', '/l*v', "`"$env:RUNNER_TEMP\setup.log`"" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content "$env:RUNNER_TEMP\setup.log" -Tail 60 -ErrorAction SilentlyContinue; throw "setup.exe exited with $($p.ExitCode)" }
+          $exe = Get-Item "$env:LOCALAPPDATA\LockScope\LockScope.exe" -ErrorAction SilentlyContinue
+          if (-not $exe) { throw 'setup.exe did not install LockScope.exe' }
+          "installed to $($exe.DirectoryName)"
+          Add-Content $env:GITHUB_ENV "INSTALL_DIR=$($exe.DirectoryName -replace '\\','/')"
+      - name: Smoke-test the app installed by setup.exe
+        run: bash scripts/smoke-desktop.sh "$INSTALL_DIR/LockScope.exe" "$INSTALL_DIR/lockscope-cli.exe"
+      - name: Uninstall
+        shell: pwsh
+        run: |
+          $entry = Get-ChildItem HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall, HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall |
+            Get-ItemProperty | Where-Object DisplayName -eq 'LockScope' | Select-Object -First 1
+          if (-not $entry) { throw 'LockScope is not listed under installed apps' }
+          $p = Start-Process msiexec -ArgumentList '/x', $entry.PSChildName, '/qn' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "uninstall exited with $($p.ExitCode)" }
+          if (Test-Path "$env:LOCALAPPDATA\LockScope\LockScope.exe") { throw 'uninstall left LockScope.exe behind' }
+          'uninstalled'
       - name: Install the .msi
         shell: pwsh
         run: |
@@ -111,7 +139,7 @@ jobs:
           if (-not (Test-Path (Join-Path $exe.DirectoryName 'Start LockScope.bat'))) { throw 'Start LockScope.bat is missing' }
           "installed to $($exe.DirectoryName)"
           Add-Content $env:GITHUB_ENV "INSTALL_DIR=$($exe.DirectoryName -replace '\\','/')"
-      - name: Smoke-test the installed app
+      - name: Smoke-test the app installed by the .msi
         run: bash scripts/smoke-desktop.sh "$INSTALL_DIR/LockScope.exe" "$INSTALL_DIR/lockscope-cli.exe"
       - uses: actions/upload-artifact@v4
         with:
