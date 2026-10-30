@@ -1,0 +1,21 @@
+// Local HTTP API (JDK built-in HTTP server) that runs experiments for the dashboard.
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':core')
+    implementation project(':bench')
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    // JMH must be on the server's classpath: benchmark forks reuse it.
+    implementation "org.openjdk.jmh:jmh-core:${jmhVersion}"
+}
+
+application {
+    mainClass = 'io.lockscope.server.LockScopeServer'
+    applicationName = 'lockscope-server'
+}
+
+tasks.named('run', JavaExec) {
+    workingDir = rootProject.projectDir.parentFile
+}

@@ -1,0 +1,3 @@
+rootProject.name = 'lockscope-engine'
+
+include 'core', 'bench', 'server'

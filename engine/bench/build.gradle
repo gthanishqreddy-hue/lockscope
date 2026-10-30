@@ -1,0 +1,28 @@
+// Benchmarking (JMH), result schema and export, and the `lockscope` command-line tool.
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':core')
+    implementation "org.openjdk.jmh:jmh-core:${jmhVersion}"
+    annotationProcessor "org.openjdk.jmh:jmh-generator-annprocess:${jmhVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+}
+
+// JMH's generated benchmark stubs trigger lint warnings we do not control.
+tasks.named('compileJava') {
+    options.compilerArgs -= ['-Werror']
+    options.compilerArgs += ['-Xlint:-rawtypes', '-Xlint:-unchecked', '-Xlint:-cast', '-Xlint:-static']
+}
+
+application {
+    mainClass = 'io.lockscope.bench.cli.LockScopeCli'
+    applicationName = 'lockscope'
+}
+
+// Run from the repository root so relative paths such as benchmark-results/ work as documented.
+tasks.named('run', JavaExec) {
+    workingDir = rootProject.projectDir.parentFile
+    standardInput = System.in
+}

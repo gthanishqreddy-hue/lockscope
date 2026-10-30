@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Reports whether the tools LockScope needs are installed. Changes nothing.
+set -uo pipefail
+ok=0
+
+check() {
+  local name="$1" cmd="$2" hint="$3"
+  if out=$(eval "$cmd" 2>&1); then
+    printf '  ok      %-8s %s\n' "$name" "$(echo "$out" | head -1)"
+  else
+    printf '  MISSING %-8s %s\n' "$name" "$hint"
+    ok=1
+  fi
+}
+
+echo "LockScope prerequisites:"
+check java "java -version 2>&1 | head -1" "install a JDK 17 or newer (e.g. Temurin or Microsoft Build of OpenJDK)"
+check node "node --version" "install Node.js 20.19+ or 22+"
+check npm "npm --version" "comes with Node.js"
+check git "git --version" "optional, needed only to publish the repository"
+
+if command -v java >/dev/null 2>&1; then
+  major=$(java -version 2>&1 | head -1 | sed -E 's/.*version "([0-9]+).*/\1/')
+  if [ "${major:-0}" -lt 17 ] 2>/dev/null; then
+    echo "  Java $major is too old: the engine needs Java 17 or newer."
+    ok=1
+  fi
+fi
+echo "Gradle is not needed: engine/gradlew downloads the pinned version."
+exit $ok

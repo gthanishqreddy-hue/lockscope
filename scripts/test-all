@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Runs every automated check: engine build + tests, then frontend type check, lint, format,
+# tests and production build. Exits non-zero on the first failure.
+set -euo pipefail
+root="$(cd "$(dirname "$0")/.." && pwd)"
+
+echo "==> Engine: build and tests"
+(cd "$root/engine" && ./gradlew --no-daemon build)
+
+echo "==> Frontend: install"
+(cd "$root/frontend" && npm ci)
+
+echo "==> Frontend: type check, lint, format, tests, build"
+(cd "$root/frontend" && npm run check)
+
+echo "All checks passed."

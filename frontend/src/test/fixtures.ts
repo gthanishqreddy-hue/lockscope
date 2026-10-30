@@ -1,0 +1,147 @@
+import type { BenchmarkReport, CorrectnessReport, EnvironmentInfo, Measurement } from '../schemas/results';
+
+export const env: EnvironmentInfo = {
+  lockscopeVersion: '0.1.0',
+  javaVersion: '17.0.20.1',
+  javaVendor: 'Microsoft',
+  vmName: 'OpenJDK 64-Bit Server VM',
+  vmVersion: '17.0.20.1+1-LTS',
+  osName: 'Windows 11',
+  osVersion: '10.0',
+  osArch: 'amd64',
+  availableProcessors: 8,
+  maxHeapMb: 4096,
+  jmhVersion: '1.37',
+};
+
+export function measurement(
+  algorithm: string,
+  threads: number,
+  score: number,
+  scoreError: number | null = score * 0.02,
+): Measurement {
+  return {
+    algorithm,
+    threads,
+    score,
+    scoreError,
+    unit: 'ops/us',
+    sampleCount: 10,
+    min: score * 0.98,
+    max: score * 1.02,
+    stdev: score * 0.01,
+    iterationScores: [score],
+    percentiles: null,
+    allocBytesPerOp: 0,
+  };
+}
+
+export function benchmarkReport(overrides: Partial<BenchmarkReport> = {}): BenchmarkReport {
+  return {
+    schema: 'lockscope.benchmark/v1',
+    id: 'bench-20261030T000000Z-abcdef',
+    createdAt: '2026-10-30T00:00:00Z',
+    origin: 'local-engine',
+    title: 'Lock benchmark (lock-high-contention, thrpt)',
+    kind: 'lock',
+    environment: env,
+    methodology: {
+      tool: 'jmh',
+      mode: 'thrpt',
+      scoreUnit: 'ops/us',
+      forks: 2,
+      warmupIterations: 5,
+      warmupMillis: 1000,
+      measurementIterations: 5,
+      measurementMillis: 1000,
+      gcProfiler: true,
+      errorDefinition: '99.9% CI',
+    },
+    workload: {
+      profile: 'lock-high-contention',
+      criticalWork: 10,
+      nonCriticalWork: 0,
+      keyRange: null,
+      readPercent: null,
+      threadCounts: [1, 2, 4],
+    },
+    measurements: [
+      measurement('tas', 1, 50),
+      measurement('tas', 2, 20),
+      measurement('tas', 4, 10),
+      measurement('mcs', 1, 40),
+      measurement('mcs', 2, 25),
+      measurement('mcs', 4, 24),
+    ],
+    warnings: [],
+    reproduceCommand: 'cd engine && ./gradlew :bench:run --args="bench"',
+    ...overrides,
+  };
+}
+
+export function correctnessReport(): CorrectnessReport {
+  return {
+    schema: 'lockscope.correctness/v1',
+    id: 'test-20261030T000000Z-abcdef',
+    createdAt: '2026-10-30T00:00:00Z',
+    origin: 'local-engine',
+    environment: env,
+    config: {
+      target: 'LOCKS',
+      algorithms: ['ttas', 'none'],
+      threads: 4,
+      operationsPerThread: 1000,
+      runs: 1,
+      seed: 42,
+      criticalSectionWork: 10,
+      keyRange: 256,
+      readPercent: 50,
+      linearizabilityHistories: 0,
+      linearizabilityOpsPerThread: 8,
+      linearizabilityKeys: 3,
+      timeoutMillis: 60000,
+    },
+    summary: {
+      total: 2,
+      passed: 1,
+      failed: 0,
+      timedOut: 0,
+      errors: 0,
+      controlsDetected: 1,
+      controlsMissed: 0,
+      durationMillis: 120,
+      asExpected: true,
+      cancelled: false,
+    },
+    results: [
+      {
+        check: 'lock.lost-update',
+        algorithm: 'ttas',
+        threads: 4,
+        operationsPerThread: 1000,
+        seed: 42,
+        status: 'PASSED',
+        failureCategory: null,
+        durationMillis: 10,
+        metrics: { expectedCount: 4000, observedCount: 4000 },
+        diagnostics: [],
+        negativeControl: false,
+      },
+      {
+        check: 'lock.lost-update',
+        algorithm: 'none',
+        threads: 4,
+        operationsPerThread: 1000,
+        seed: 42,
+        status: 'FAILED',
+        failureCategory: 'LOST_UPDATE',
+        durationMillis: 5,
+        metrics: { expectedCount: 4000, observedCount: 2500 },
+        diagnostics: ['counter is 2500, expected 4000'],
+        negativeControl: true,
+      },
+    ],
+    reproduceCommand: 'cd engine && ./gradlew :bench:run --args="stress"',
+    limitations: ['Not a proof.'],
+  };
+}

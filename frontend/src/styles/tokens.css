@@ -1,0 +1,126 @@
+/*
+ * Design tokens. Dark is the default look; light is its own selected set of steps, not an
+ * automatic inversion. The OS preference applies unless the user picked a theme in Settings,
+ * which sets data-theme on <html> and wins in both directions.
+ *
+ * Series colors are the validated categorical palette (fixed order, see
+ * src/content/algorithms.ts for the per-algorithm slot assignment). Status colors are reserved
+ * for pass/warn/fail and always ship with an icon and a label.
+ */
+:root {
+  color-scheme: dark;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, Consolas, monospace;
+
+  --bg: #0d1117;
+  --surface-1: #141a23;
+  --surface-2: #1a212c;
+  --surface-3: #222b38;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --text-primary: #e8ecf1;
+  --text-secondary: #a9b3c1;
+  --text-muted: #7d8796;
+
+  --accent: #3fd0b8;
+  --accent-strong: #62dcc8;
+  --accent-ink: #06231f;
+  --accent-wash: rgba(63, 208, 184, 0.12);
+  --focus-ring: #7fe6d5;
+
+  --grid: #232b36;
+  --axis: #3a4452;
+
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+
+  --good: #0ca30c;
+  --good-text: #3ccf3c;
+  --warning: #fab219;
+  --warning-text: #fbc14a;
+  --critical: #d03b3b;
+  --critical-text: #f07272;
+  --neutral-status: #7d8796;
+
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.2);
+
+  --sidebar-width: 236px;
+  --sidebar-collapsed: 60px;
+  --topbar-height: 56px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:where(:not([data-theme='dark'])) {
+    color-scheme: light;
+    --bg: #f5f6f8;
+    --surface-1: #ffffff;
+    --surface-2: #f7f8fa;
+    --surface-3: #eceef2;
+    --border: rgba(11, 18, 32, 0.1);
+    --border-strong: rgba(11, 18, 32, 0.2);
+    --text-primary: #0f1722;
+    --text-secondary: #46505e;
+    --text-muted: #6b7482;
+    --accent: #0b7a6b;
+    --accent-strong: #08695c;
+    --accent-ink: #ffffff;
+    --accent-wash: rgba(11, 122, 107, 0.1);
+    --focus-ring: #0b7a6b;
+    --grid: #e6e8ec;
+    --axis: #c3c7cf;
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
+    --series-3: #1baf7a;
+    --series-4: #eda100;
+    --series-5: #e87ba4;
+    --series-6: #008300;
+    --series-7: #6250d6;
+    --series-8: #e34948;
+    --good-text: #006300;
+    --warning-text: #8a5a00;
+    --critical-text: #b02a2a;
+    --shadow: 0 1px 2px rgba(15, 23, 34, 0.06), 0 6px 18px rgba(15, 23, 34, 0.06);
+  }
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f5f6f8;
+  --surface-1: #ffffff;
+  --surface-2: #f7f8fa;
+  --surface-3: #eceef2;
+  --border: rgba(11, 18, 32, 0.1);
+  --border-strong: rgba(11, 18, 32, 0.2);
+  --text-primary: #0f1722;
+  --text-secondary: #46505e;
+  --text-muted: #6b7482;
+  --accent: #0b7a6b;
+  --accent-strong: #08695c;
+  --accent-ink: #ffffff;
+  --accent-wash: rgba(11, 122, 107, 0.1);
+  --focus-ring: #0b7a6b;
+  --grid: #e6e8ec;
+  --axis: #c3c7cf;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #6250d6;
+  --series-8: #e34948;
+  --good-text: #006300;
+  --warning-text: #8a5a00;
+  --critical-text: #b02a2a;
+  --shadow: 0 1px 2px rgba(15, 23, 34, 0.06), 0 6px 18px rgba(15, 23, 34, 0.06);
+}

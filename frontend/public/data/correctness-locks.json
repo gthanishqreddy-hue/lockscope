@@ -1,0 +1,919 @@
+{
+  "schema": "lockscope.correctness/v1",
+  "id": "test-20261029T200511Z-2dcc1f",
+  "createdAt": "2026-10-29T20:05:11.593149800Z",
+  "origin": "bundled-sample",
+  "environment": {
+    "lockscopeVersion": "0.1.0",
+    "javaVersion": "17.0.20.1",
+    "javaVendor": "Microsoft",
+    "vmName": "OpenJDK 64-Bit Server VM",
+    "vmVersion": "17.0.20.1+1-LTS",
+    "osName": "Windows 11",
+    "osVersion": "10.0",
+    "osArch": "amd64",
+    "availableProcessors": 8,
+    "maxHeapMb": 5604,
+    "jmhVersion": "1.37"
+  },
+  "config": {
+    "target": "LOCKS",
+    "algorithms": [
+      "tas",
+      "ttas",
+      "backoff",
+      "clh",
+      "mcs",
+      "jdk-reentrant",
+      "jdk-reentrant-fair",
+      "none"
+    ],
+    "threads": 8,
+    "operationsPerThread": 200000,
+    "runs": 3,
+    "seed": 42,
+    "criticalSectionWork": 10,
+    "keyRange": 256,
+    "readPercent": 50,
+    "linearizabilityHistories": 300,
+    "linearizabilityOpsPerThread": 8,
+    "linearizabilityKeys": 3,
+    "timeoutMillis": 60000
+  },
+  "summary": {
+    "total": 48,
+    "passed": 42,
+    "failed": 0,
+    "timedOut": 0,
+    "errors": 0,
+    "controlsDetected": 6,
+    "controlsMissed": 0,
+    "durationMillis": 65490,
+    "asExpected": true,
+    "cancelled": false
+  },
+  "results": [
+    {
+      "check": "lock.lost-update",
+      "algorithm": "tas",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 333,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "tas",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 725,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "ttas",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 370,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "ttas",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 642,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "backoff",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 313,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "backoff",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 334,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "clh",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 281,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "clh",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 288,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "mcs",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 239,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "mcs",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 411,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "jdk-reentrant",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 74,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "jdk-reentrant",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 88,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "jdk-reentrant-fair",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 9321,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "jdk-reentrant-fair",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 9400,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "none",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "FAILED",
+      "failureCategory": "LOST_UPDATE",
+      "durationMillis": 22,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 266540,
+        "lostUpdates": 1333460
+      },
+      "diagnostics": [
+        "counter is 266540, expected 1600000: 1333460 increments were lost"
+      ],
+      "negativeControl": true
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "none",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 42,
+      "status": "FAILED",
+      "failureCategory": "MUTUAL_EXCLUSION_VIOLATION",
+      "durationMillis": 172,
+      "metrics": {
+        "overlappingEntries": 1590757,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 8,
+        "observedCount": 647394
+      },
+      "diagnostics": [
+        "1590757 entries found another thread inside the critical section (up to 8 owners at once)",
+        "counter is 647394, expected 1600000"
+      ],
+      "negativeControl": true
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "tas",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 415,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "tas",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 658,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "ttas",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 476,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "ttas",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 664,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "backoff",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 303,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "backoff",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 291,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "clh",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 1460,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "clh",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 416,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "mcs",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 242,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "mcs",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 248,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "jdk-reentrant",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 74,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "jdk-reentrant",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 88,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "jdk-reentrant-fair",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 9358,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "jdk-reentrant-fair",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 8176,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "none",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "FAILED",
+      "failureCategory": "LOST_UPDATE",
+      "durationMillis": 27,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 241436,
+        "lostUpdates": 1358564
+      },
+      "diagnostics": [
+        "counter is 241436, expected 1600000: 1358564 increments were lost"
+      ],
+      "negativeControl": true
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "none",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 43,
+      "status": "FAILED",
+      "failureCategory": "MUTUAL_EXCLUSION_VIOLATION",
+      "durationMillis": 115,
+      "metrics": {
+        "overlappingEntries": 1545391,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 8,
+        "observedCount": 806045
+      },
+      "diagnostics": [
+        "1545391 entries found another thread inside the critical section (up to 8 owners at once)",
+        "counter is 806045, expected 1600000"
+      ],
+      "negativeControl": true
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "tas",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 369,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "tas",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 773,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "ttas",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 347,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "ttas",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 574,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "backoff",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 211,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "backoff",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 384,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "clh",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 802,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "clh",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 576,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "mcs",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 619,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "mcs",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 418,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "jdk-reentrant",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 69,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "jdk-reentrant",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 73,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "jdk-reentrant-fair",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 7285,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 1600000,
+        "lostUpdates": 0
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "jdk-reentrant-fair",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "PASSED",
+      "failureCategory": null,
+      "durationMillis": 6692,
+      "metrics": {
+        "overlappingEntries": 0,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 1,
+        "observedCount": 1600000
+      },
+      "diagnostics": [],
+      "negativeControl": false
+    },
+    {
+      "check": "lock.lost-update",
+      "algorithm": "none",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "FAILED",
+      "failureCategory": "LOST_UPDATE",
+      "durationMillis": 22,
+      "metrics": {
+        "expectedCount": 1600000,
+        "observedCount": 312698,
+        "lostUpdates": 1287302
+      },
+      "diagnostics": [
+        "counter is 312698, expected 1600000: 1287302 increments were lost"
+      ],
+      "negativeControl": true
+    },
+    {
+      "check": "lock.mutual-exclusion",
+      "algorithm": "none",
+      "threads": 8,
+      "operationsPerThread": 200000,
+      "seed": 44,
+      "status": "FAILED",
+      "failureCategory": "MUTUAL_EXCLUSION_VIOLATION",
+      "durationMillis": 132,
+      "metrics": {
+        "overlappingEntries": 1598409,
+        "expectedEntries": 1600000,
+        "maxSimultaneousOwners": 8,
+        "observedCount": 613359
+      },
+      "diagnostics": [
+        "1598409 entries found another thread inside the critical section (up to 8 owners at once)",
+        "counter is 613359, expected 1600000"
+      ],
+      "negativeControl": true
+    }
+  ],
+  "reproduceCommand": "cd engine && ./gradlew :bench:run --args=\"stress --target locks --algorithms tas,ttas,backoff,clh,mcs,jdk-reentrant,jdk-reentrant-fair,none --threads 8 --ops 200000 --runs 3 --seed 42 --timeout-ms 60000 --cs-work 10\"",
+  "limitations": [
+    "Passing checks are evidence for the tested configurations, not a proof of correctness.",
+    "The seed reproduces the generated workload; the thread interleaving depends on the OS scheduler and is not reproducible.",
+    "The linearizability checker verifies short bounded histories of add/remove/contains only; size() and snapshot() are not checked for linearizability.",
+    "Results depend on the hardware memory model: a JMM violation that x86 hardware happens to hide can pass here and fail on ARM."
+  ]
+}

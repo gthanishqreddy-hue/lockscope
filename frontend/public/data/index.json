@@ -1,0 +1,28 @@
+{
+  "datasets": [
+    {
+      "file": "correctness-locks.json",
+      "description": "Correctness suite (locks): 42 passed, 0 failed, 6 controls caught, on Windows 11 amd64, 8 CPUs, Java 17.0.20.1."
+    },
+    {
+      "file": "correctness-sets.json",
+      "description": "Correctness suite (sets): 45 passed, 0 failed, 0 controls caught, on Windows 11 amd64, 8 CPUs, Java 17.0.20.1."
+    },
+    {
+      "file": "locks-high-contention.json",
+      "description": "Lock benchmark (lock-high-contention, thrpt): JMH thrpt, 2 fork(s) x 5 x 1000 ms, on Windows 11 amd64, 8 CPUs, Java 17.0.20.1."
+    },
+    {
+      "file": "locks-latency-sample-mode.json",
+      "description": "Lock benchmark (lock-moderate-contention, sample): JMH sample, 1 fork(s) x 5 x 1000 ms, on Windows 11 amd64, 8 CPUs, Java 17.0.20.1."
+    },
+    {
+      "file": "sets-balanced.json",
+      "description": "Concurrent set benchmark (set-balanced, thrpt): JMH thrpt, 2 fork(s) x 5 x 1000 ms, on Windows 11 amd64, 8 CPUs, Java 17.0.20.1."
+    },
+    {
+      "file": "sets-read-heavy.json",
+      "description": "Concurrent set benchmark (set-read-heavy, thrpt): JMH thrpt, 2 fork(s) x 5 x 1000 ms, on Windows 11 amd64, 8 CPUs, Java 17.0.20.1."
+    }
+  ]
+}

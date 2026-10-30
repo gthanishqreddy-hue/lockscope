@@ -1,0 +1,329 @@
+{
+  "schema" : "lockscope.benchmark/v1",
+  "id" : "bench-20261029T203216Z-c849e0",
+  "createdAt" : "2026-10-29T20:32:16.201651Z",
+  "origin" : "local-engine",
+  "title" : "Lock benchmark (lock-moderate-contention, sample)",
+  "kind" : "lock",
+  "environment" : {
+    "lockscopeVersion" : "0.1.0",
+    "javaVersion" : "17.0.20.1",
+    "javaVendor" : "Microsoft",
+    "vmName" : "OpenJDK 64-Bit Server VM",
+    "vmVersion" : "17.0.20.1+1-LTS",
+    "osName" : "Windows 11",
+    "osVersion" : "10.0",
+    "osArch" : "amd64",
+    "availableProcessors" : 8,
+    "maxHeapMb" : 5604,
+    "jmhVersion" : "1.37"
+  },
+  "methodology" : {
+    "tool" : "jmh",
+    "mode" : "sample",
+    "scoreUnit" : "ns/op",
+    "forks" : 1,
+    "warmupIterations" : 3,
+    "warmupMillis" : 1000,
+    "measurementIterations" : 5,
+    "measurementMillis" : 1000,
+    "gcProfiler" : true,
+    "errorDefinition" : "Half-width of the 99.9% confidence interval of the mean across measurement iterations (Student's t), as computed by JMH"
+  },
+  "workload" : {
+    "profile" : "lock-moderate-contention",
+    "criticalWork" : 10,
+    "nonCriticalWork" : 200,
+    "keyRange" : null,
+    "readPercent" : null,
+    "threadCounts" : [ 1, 4, 8 ]
+  },
+  "measurements" : [ {
+    "algorithm" : "tas",
+    "threads" : 1,
+    "score" : 451.09468018070936,
+    "scoreError" : 11.601583697779915,
+    "unit" : "ns/op",
+    "sampleCount" : 187262,
+    "min" : 400.0,
+    "max" : 631808.0,
+    "stdev" : 1525.702385699624,
+    "iterationScores" : [ 446.2754478286291, 467.151836669078, 444.5769343689113, 443.16312281815294, 454.50062105092616 ],
+    "percentiles" : {
+      "p50" : 400.0,
+      "p90" : 500.0,
+      "p99" : 800.0,
+      "p99.9" : 3000.0,
+      "max" : 631808.0
+    },
+    "allocBytesPerOp" : 0.0900045376209101
+  }, {
+    "algorithm" : "tas",
+    "threads" : 4,
+    "score" : 634.0935348867549,
+    "scoreError" : 15.854013230241927,
+    "unit" : "ns/op",
+    "sampleCount" : 582542,
+    "min" : 400.0,
+    "max" : 910336.0,
+    "stdev" : 3677.35205812002,
+    "iterationScores" : [ 635.1876299199182, 663.2299067361099, 632.1318441283629, 620.7774857869153, 619.294501229137 ],
+    "percentiles" : {
+      "p50" : 500.0,
+      "p90" : 700.0,
+      "p99" : 1100.0,
+      "p99.9" : 7200.0,
+      "max" : 910336.0
+    },
+    "allocBytesPerOp" : 0.1524413758856375
+  }, {
+    "algorithm" : "tas",
+    "threads" : 8,
+    "score" : 2018.0764438776298,
+    "scoreError" : 228.92276097915268,
+    "unit" : "ns/op",
+    "sampleCount" : 972295,
+    "min" : 400.0,
+    "max" : 2.6836992E7,
+    "stdev" : 68599.54850568008,
+    "iterationScores" : [ 2162.4127028062853, 1686.2281924186404, 2072.0851094278673, 2174.755597402137, 2001.1366260819448 ],
+    "percentiles" : {
+      "p50" : 900.0,
+      "p90" : 1900.0,
+      "p99" : 3700.0,
+      "p99.9" : 86708.22400000691,
+      "max" : 2.6836992E7
+    },
+    "allocBytesPerOp" : 0.48883187892830693
+  }, {
+    "algorithm" : "ttas",
+    "threads" : 1,
+    "score" : 463.3702528677286,
+    "scoreError" : 9.786598463599647,
+    "unit" : "ns/op",
+    "sampleCount" : 181241,
+    "min" : 400.0,
+    "max" : 390656.0,
+    "stdev" : 1266.156783417486,
+    "iterationScores" : [ 452.28724168195964, 447.0604012559204, 468.7103819078765, 483.6736998694557, 467.91166068198385 ],
+    "percentiles" : {
+      "p50" : 400.0,
+      "p90" : 500.0,
+      "p99" : 900.0,
+      "p99.9" : 4000.0,
+      "max" : 390656.0
+    },
+    "allocBytesPerOp" : 0.09573619950292549
+  }, {
+    "algorithm" : "ttas",
+    "threads" : 4,
+    "score" : 659.2672332130236,
+    "scoreError" : 27.206863828660236,
+    "unit" : "ns/op",
+    "sampleCount" : 583771,
+    "min" : 400.0,
+    "max" : 2678784.0,
+    "stdev" : 6317.308972763473,
+    "iterationScores" : [ 814.5619765948595, 674.0650476568021, 595.9858382435347, 601.4922487415162, 621.5168492348859 ],
+    "percentiles" : {
+      "p50" : 500.0,
+      "p90" : 700.0,
+      "p99" : 1200.0,
+      "p99.9" : 9813.888000000268,
+      "max" : 2678784.0
+    },
+    "allocBytesPerOp" : 0.15057814551576856
+  }, {
+    "algorithm" : "ttas",
+    "threads" : 8,
+    "score" : 2404.115809717576,
+    "scoreError" : 327.04966273443654,
+    "unit" : "ns/op",
+    "sampleCount" : 1077388,
+    "min" : 400.0,
+    "max" : 3.03104E7,
+    "stdev" : 103165.18408106545,
+    "iterationScores" : [ 3414.0113991121293, 2027.316332270767, 2491.7933862618916, 2298.7289976079796, 2015.828950448693 ],
+    "percentiles" : {
+      "p50" : 1000.0,
+      "p90" : 2300.0,
+      "p99" : 4800.0,
+      "p99.9" : 69070.20800000429,
+      "max" : 3.03104E7
+    },
+    "allocBytesPerOp" : 0.5822870515049393
+  }, {
+    "algorithm" : "backoff",
+    "threads" : 1,
+    "score" : 457.94078933264734,
+    "scoreError" : 9.701405943750052,
+    "unit" : "ns/op",
+    "sampleCount" : 186588,
+    "min" : 400.0,
+    "max" : 290816.0,
+    "stdev" : 1273.5154749883327,
+    "iterationScores" : [ 464.07273520351134, 448.28530838716597, 460.10695640651915, 460.42062342400345, 456.90605794556626 ],
+    "percentiles" : {
+      "p50" : 400.0,
+      "p90" : 500.0,
+      "p99" : 800.0,
+      "p99.9" : 3541.1000000021886,
+      "max" : 290816.0
+    },
+    "allocBytesPerOp" : 0.09997449580281463
+  }, {
+    "algorithm" : "backoff",
+    "threads" : 4,
+    "score" : 603.1867761299148,
+    "scoreError" : 22.636133358596688,
+    "unit" : "ns/op",
+    "sampleCount" : 616219,
+    "min" : 400.0,
+    "max" : 2318336.0,
+    "stdev" : 5400.105929405844,
+    "iterationScores" : [ 590.5323987938667, 577.8599599607713, 705.204422184014, 568.8781346936508, 576.4419976664311 ],
+    "percentiles" : {
+      "p50" : 500.0,
+      "p90" : 700.0,
+      "p99" : 1100.0,
+      "p99.9" : 7696.0,
+      "max" : 2318336.0
+    },
+    "allocBytesPerOp" : 0.14060746711482985
+  }, {
+    "algorithm" : "backoff",
+    "threads" : 8,
+    "score" : 2272.852396599918,
+    "scoreError" : 264.8699380769944,
+    "unit" : "ns/op",
+    "sampleCount" : 978094,
+    "min" : 400.0,
+    "max" : 2.326528E7,
+    "stdev" : 79607.91164345664,
+    "iterationScores" : [ 2617.8043132543903, 2138.060570017388, 2352.010058239808, 2406.7535098859935, 1895.0986037920356 ],
+    "percentiles" : {
+      "p50" : 800.0,
+      "p90" : 1800.0,
+      "p99" : 11792.0,
+      "p99.9" : 91776.0,
+      "max" : 2.326528E7
+    },
+    "allocBytesPerOp" : 0.511748898827744
+  }, {
+    "algorithm" : "mcs",
+    "threads" : 1,
+    "score" : 475.593859495445,
+    "scoreError" : 13.748881722197536,
+    "unit" : "ns/op",
+    "sampleCount" : 182656,
+    "min" : 400.0,
+    "max" : 410112.0,
+    "stdev" : 1785.7139584467457,
+    "iterationScores" : [ 478.6365200294913, 468.999751002905, 478.41833310598827, 492.24814937575957, 459.9430747211795 ],
+    "percentiles" : {
+      "p50" : 400.0,
+      "p90" : 500.0,
+      "p99" : 800.0,
+      "p99.9" : 4400.0,
+      "max" : 410112.0
+    },
+    "allocBytesPerOp" : 0.10967929743503593
+  }, {
+    "algorithm" : "mcs",
+    "threads" : 4,
+    "score" : 890.5820615585083,
+    "scoreError" : 127.6908421723393,
+    "unit" : "ns/op",
+    "sampleCount" : 506510,
+    "min" : 400.0,
+    "max" : 7225344.0,
+    "stdev" : 27617.591703645227,
+    "iterationScores" : [ 670.8797706844348, 688.8418291229862, 1819.639487625698, 697.5386895025498, 693.5669735446756 ],
+    "percentiles" : {
+      "p50" : 600.0,
+      "p90" : 800.0,
+      "p99" : 1300.0,
+      "p99.9" : 20000.0,
+      "max" : 7225344.0
+    },
+    "allocBytesPerOp" : 0.18964633678987472
+  }, {
+    "algorithm" : "mcs",
+    "threads" : 8,
+    "score" : 4786.265430715068,
+    "scoreError" : 894.3525688123129,
+    "unit" : "ns/op",
+    "sampleCount" : 1213424,
+    "min" : 400.0,
+    "max" : 8.4803584E7,
+    "stdev" : 299397.77423764527,
+    "iterationScores" : [ 5497.015236972809, 5046.511324547688, 3712.2969722500757, 6870.814017237083, 3019.7079297177606 ],
+    "percentiles" : {
+      "p50" : 1000.0,
+      "p90" : 1200.0,
+      "p99" : 1400.0,
+      "p99.9" : 275750.39999997616,
+      "max" : 8.4803584E7
+    },
+    "allocBytesPerOp" : 0.8306311634953778
+  }, {
+    "algorithm" : "jdk-reentrant",
+    "threads" : 1,
+    "score" : 466.41055129311985,
+    "scoreError" : 10.480852602804951,
+    "unit" : "ns/op",
+    "sampleCount" : 184167,
+    "min" : 400.0,
+    "max" : 324096.0,
+    "stdev" : 1366.8791659517851,
+    "iterationScores" : [ 452.66287052312276, 533.7045122876656, 455.1544759237315, 452.48330700650587, 443.92632135306553 ],
+    "percentiles" : {
+      "p50" : 400.0,
+      "p90" : 500.0,
+      "p99" : 800.0,
+      "p99.9" : 3800.0,
+      "max" : 324096.0
+    },
+    "allocBytesPerOp" : 0.09476877703104392
+  }, {
+    "algorithm" : "jdk-reentrant",
+    "threads" : 4,
+    "score" : 1090.890321233107,
+    "scoreError" : 19.7272854650818,
+    "unit" : "ns/op",
+    "sampleCount" : 612826,
+    "min" : 400.0,
+    "max" : 871424.0,
+    "stdev" : 4693.192863916711,
+    "iterationScores" : [ 1305.6297979707604, 1273.934942324756, 1044.2027974113507, 951.8517114483037, 932.3796428271988 ],
+    "percentiles" : {
+      "p50" : 500.0,
+      "p90" : 700.0,
+      "p99" : 13296.0,
+      "p99.9" : 28912.608000006527,
+      "max" : 871424.0
+    },
+    "allocBytesPerOp" : 2.6456762316047207
+  }, {
+    "algorithm" : "jdk-reentrant",
+    "threads" : 8,
+    "score" : 2482.0620407710367,
+    "scoreError" : 32.97097935993367,
+    "unit" : "ns/op",
+    "sampleCount" : 1153564,
+    "min" : 400.0,
+    "max" : 1273856.0,
+    "stdev" : 10761.8307618706,
+    "iterationScores" : [ 2941.4061910755536, 2695.687015748144, 2261.8100928752356, 2300.3789947031332, 2312.7711623480413 ],
+    "percentiles" : {
+      "p50" : 500.0,
+      "p90" : 600.0,
+      "p99" : 38144.0,
+      "p99.9" : 103552.0,
+      "max" : 1273856.0
+    },
+    "allocBytesPerOp" : 2.81173172570426
+  } ],
+  "warnings" : [ "High variability for tas at 8 threads: +/-11% (99.9% CI). Treat differences smaller than this as noise.", "High variability for ttas at 8 threads: +/-14% (99.9% CI). Treat differences smaller than this as noise.", "High variability for backoff at 8 threads: +/-12% (99.9% CI). Treat differences smaller than this as noise.", "High variability for mcs at 4 threads: +/-14% (99.9% CI). Treat differences smaller than this as noise.", "High variability for mcs at 8 threads: +/-19% (99.9% CI). Treat differences smaller than this as noise." ],
+  "reproduceCommand" : "cd engine && ./gradlew :bench:run --args=\"bench --kind lock --profile lock-moderate-contention --algorithms tas,ttas,backoff,mcs,jdk-reentrant --threads 1,4,8 --cs-work 10 --ncs-work 200 --mode sample --forks 1 --wi 3 --wt 1000 --mi 5 --mt 1000\""
+}

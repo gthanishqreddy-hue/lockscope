@@ -1,0 +1,2 @@
+// Core concurrency library: locks, concurrent sets and the correctness harness.
+// Deliberately has no runtime dependencies.

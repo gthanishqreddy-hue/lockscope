@@ -1,0 +1,784 @@
+{
+  "schema" : "lockscope.correctness/v1",
+  "id" : "test-20261029T200528Z-2084bf",
+  "createdAt" : "2026-10-29T20:05:28.914773700Z",
+  "origin" : "local-engine",
+  "environment" : {
+    "lockscopeVersion" : "0.1.0",
+    "javaVersion" : "17.0.20.1",
+    "javaVendor" : "Microsoft",
+    "vmName" : "OpenJDK 64-Bit Server VM",
+    "vmVersion" : "17.0.20.1+1-LTS",
+    "osName" : "Windows 11",
+    "osVersion" : "10.0",
+    "osArch" : "amd64",
+    "availableProcessors" : 8,
+    "maxHeapMb" : 5604,
+    "jmhVersion" : "1.37"
+  },
+  "config" : {
+    "target" : "SETS",
+    "algorithms" : [ "coarse", "fine", "optimistic", "lazy", "lockfree" ],
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "runs" : 3,
+    "seed" : 42,
+    "criticalSectionWork" : 10,
+    "keyRange" : 256,
+    "readPercent" : 50,
+    "linearizabilityHistories" : 300,
+    "linearizabilityOpsPerThread" : 8,
+    "linearizabilityKeys" : 3,
+    "timeoutMillis" : 60000
+  },
+  "summary" : {
+    "total" : 45,
+    "passed" : 45,
+    "failed" : 0,
+    "timedOut" : 0,
+    "errors" : 0,
+    "controlsDetected" : 0,
+    "controlsMissed" : 0,
+    "durationMillis" : 13621,
+    "asExpected" : true,
+    "cancelled" : false
+  },
+  "results" : [ {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "coarse",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 235,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 119,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "coarse",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 204,
+    "metrics" : {
+      "successfulAdds" : 49907,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49891
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "coarse",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 371,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "fine",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 1051,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 119,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "fine",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 1006,
+    "metrics" : {
+      "successfulAdds" : 49884,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49872
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "fine",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 337,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "optimistic",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 432,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 119,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "optimistic",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 104,
+    "metrics" : {
+      "successfulAdds" : 49991,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49968
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "optimistic",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 401,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "lazy",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 173,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 119,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "lazy",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 45,
+    "metrics" : {
+      "successfulAdds" : 50060,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 50042
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "lazy",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 392,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "lockfree",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 92,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 119,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "lockfree",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 63,
+    "metrics" : {
+      "successfulAdds" : 49907,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49901
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "lockfree",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 42,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 275,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "coarse",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 146,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 120,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "coarse",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 140,
+    "metrics" : {
+      "successfulAdds" : 49872,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49888
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "coarse",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 246,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "fine",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 931,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 120,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "fine",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 1114,
+    "metrics" : {
+      "successfulAdds" : 49955,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49968
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "fine",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 287,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "optimistic",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 78,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 120,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "optimistic",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 71,
+    "metrics" : {
+      "successfulAdds" : 49845,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49848
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "optimistic",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 271,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "lazy",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 24,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 120,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "lazy",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 25,
+    "metrics" : {
+      "successfulAdds" : 49853,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49850
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "lazy",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 273,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "lockfree",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 41,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 120,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "lockfree",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 38,
+    "metrics" : {
+      "successfulAdds" : 49791,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49802
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "lockfree",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 43,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 291,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "coarse",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 199,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 115,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "coarse",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 206,
+    "metrics" : {
+      "successfulAdds" : 49982,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49966
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "coarse",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 493,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "fine",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 1104,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 115,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "fine",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 1095,
+    "metrics" : {
+      "successfulAdds" : 49892,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49899
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "fine",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 247,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "optimistic",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 69,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 115,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "optimistic",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 67,
+    "metrics" : {
+      "successfulAdds" : 49683,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49675
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "optimistic",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 266,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "lazy",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 21,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 115,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "lazy",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 21,
+    "metrics" : {
+      "successfulAdds" : 49975,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49958
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "lazy",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 243,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.partitioned-reference",
+    "algorithm" : "lockfree",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 31,
+    "metrics" : {
+      "operations" : 400000,
+      "finalSize" : 115,
+      "resultMismatches" : 0
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.conservation",
+    "algorithm" : "lockfree",
+    "threads" : 8,
+    "operationsPerThread" : 50000,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 37,
+    "metrics" : {
+      "successfulAdds" : 49672,
+      "operations" : 400000,
+      "conservationViolations" : 0,
+      "successfulRemoves" : 49655
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  }, {
+    "check" : "set.linearizability",
+    "algorithm" : "lockfree",
+    "threads" : 8,
+    "operationsPerThread" : 8,
+    "seed" : 44,
+    "status" : "PASSED",
+    "failureCategory" : null,
+    "durationMillis" : 238,
+    "metrics" : {
+      "historiesInconclusive" : 0,
+      "historiesChecked" : 300,
+      "operationsChecked" : 19200
+    },
+    "diagnostics" : [ ],
+    "negativeControl" : false
+  } ],
+  "reproduceCommand" : "cd engine && ./gradlew :bench:run --args=\"stress --target sets --algorithms coarse,fine,optimistic,lazy,lockfree --threads 8 --ops 50000 --runs 3 --seed 42 --timeout-ms 60000 --key-range 256 --read-percent 50 --lin-histories 300 --lin-ops 8 --lin-keys 3\"",
+  "limitations" : [ "Passing checks are evidence for the tested configurations, not a proof of correctness.", "The seed reproduces the generated workload; the thread interleaving depends on the OS scheduler and is not reproducible.", "The linearizability checker verifies short bounded histories of add/remove/contains only; size() and snapshot() are not checked for linearizability.", "Results depend on the hardware memory model: a JMM violation that x86 hardware happens to hide can pass here and fail on ARM." ]
+}
